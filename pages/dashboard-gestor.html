@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Mi cuenta Gestor</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo"><span class="logo-p">PNK</span><span class="logo-sub">Inmobiliaria</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="propiedades.html">Propiedades</a></li>
+      <li><a href="dashboard-gestor.html" class="active">Mi cuenta</a></li>
+      <li><a href="#" onclick="cerrarSesion()" class="btn-nav btn-nav-alt">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-header">
+      <p class="dash-user-name" id="sidebarNombre">–</p>
+      <span class="dash-user-role">Gestor Free</span>
+      <div id="penkaIdBox" style="margin-top:.6rem;display:none;">
+        <span style="font-size:.72rem;color:rgba(255,255,255,.5);">Tu PENKA_ID</span>
+        <p id="penkaIdVal" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold-light);font-weight:700;"></p>
+      </div>
+    </div>
+    <nav class="dash-nav">
+      <span class="dash-nav-section">Mi cuenta</span>
+      <a href="dashboard-gestor.html" class="active"> Resumen</a>
+      <a href="#tabCaptacion" onclick="mostrarTab('captacion')">Captar Propiedad</a>
+      <a href="#tabPropiedades" onclick="mostrarTab('propiedades')"><span class="nav-icon"></span> Propiedades a Ofrecer</a>
+      <span class="dash-nav-section">Plataforma</span>
+      <a href="propiedades.html"><span class="nav-icon"></span> Ver sitio público</a>
+    </nav>
+    <div class="dash-logout"><a href="#" onclick="cerrarSesion()">Cerrar sesión</a></div>
+  </aside>
+
+  <main class="dash-main">
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div id="tabResumen">
+      <div class="table-wrap" style="padding:2rem;">
+        <div id="estadoCuenta"></div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:1.5rem;">
+        <div class="table-head">
+          <h4>Mis Captaciones</h4>
+          <button class="btn-action" onclick="mostrarTab('captacion')" style="font-size:.82rem;padding:.45rem 1rem;">+ Nueva captación</button>
+        </div>
+        <div id="tablaCaptaciones"></div>
+      </div>
+    </div>
+
+    <div id="tabCaptacion" style="display:none;">
+      <div class="dash-topbar">
+        <div>
+          <h2>Captar Propiedad</h2>
+          <p style="color:var(--dark-soft);font-size:.88rem;">Ingresa los antecedentes de un propietario que quiera vender</p>
+        </div>
+      </div>
+
+      <div style="background:var(--white);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);max-width:700px;">
+        <div class="alert-info" style="margin-bottom:1.5rem;">
+          Al captar una propiedad y ser aceptada, contribuyes a la comunidad PNK y aportas a la obtención de tu PENKA_ID.
+        </div>
+        <div id="captMsg" style="display:none;"></div>
+        <div class="form-grid">
+          <h3 class="form-section-title">Datos del Propietario</h3>
+          <div class="field">
+            <label>Nombre del Propietario *</label>
+            <input type="text" id="cNombre" placeholder="Nombre completo"/>
+          </div>
+          <div class="field">
+            <label>Teléfono de Contacto *</label>
+            <input type="tel" id="cTelefono" placeholder="+56 9 ..."/>
+          </div>
+          <div class="field">
+            <label>Correo Electrónico</label>
+            <input type="email" id="cCorreo" placeholder="correo@ejemplo.cl"/>
+          </div>
+          <div class="field">
+            <label>RUT del Propietario</label>
+            <input type="text" id="cRut" placeholder="12.345.678-9"/>
+          </div>
+
+          <h3 class="form-section-title">Datos del Inmueble</h3>
+          <div class="field">
+            <label>Tipo de Propiedad *</label>
+            <select id="cTipo">
+              <option>Casa</option><option>Departamento</option><option>Terreno</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Provincia *</label>
+            <select id="cProvincia" onchange="poblarComunasCaptacion()">
+              <option>Elqui</option><option>Limarí</option><option>Choapa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Comuna *</label>
+            <select id="cComuna"></select>
+          </div>
+          <div class="field">
+            <label>Sector / Dirección referencial</label>
+            <input type="text" id="cDireccion" placeholder="Ej: El Milagro, Av. 123"/>
+          </div>
+          <div class="field">
+            <label>Precio aproximado $</label>
+            <input type="number" id="cPrecio" placeholder="0" min="0"/>
+          </div>
+          <div class="field full">
+            <label>Notas adicionales</label>
+            <textarea id="cNotas" rows="3" placeholder="Cualquier información adicional relevante…"></textarea>
+          </div>
+        </div>
+        <button class="btn-action" style="margin-top:1.5rem;width:100%;" onclick="enviarCaptacion()">Enviar Captación</button>
+      </div>
+    </div>
+
+    <div id="tabPropiedades" style="display:none;">
+      <div class="dash-topbar">
+        <div>
+          <h2>Propiedades disponibles</h2>
+          <p style="color:var(--dark-soft);font-size:.88rem;">Ofrece cualquiera de estas propiedades a tus contactos</p>
+        </div>
+      </div>
+
+      <div class="filter-bar" style="margin-bottom:1.5rem;">
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label>Tipo</label>
+          <select id="fpTipo" onchange="renderPropiedades()">
+            <option value="">Todos</option>
+            <option>Casa</option><option>Departamento</option><option>Terreno</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label>Provincia</label>
+          <select id="fpProvincia" onchange="renderPropiedades()">
+            <option value="">Todas</option>
+            <option>Elqui</option><option>Limarí</option><option>Choapa</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <label>Buscar</label>
+          <input type="text" id="fpBuscar" placeholder="Sector o comuna…" oninput="renderPropiedades()" style="min-width:160px;"/>
+        </div>
+      </div>
+
+      <div class="props-grid" id="gridPropiedades"></div>
+    </div>
+
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalPropGestor">
+  <div class="modal" style="max-width:680px;">
+    <button class="modal-close" onclick="cerrarModal('modalPropGestor')">✕</button>
+    <span id="gpCod" style="font-size:.75rem;color:var(--dark-soft);text-transform:uppercase;letter-spacing:.06em;"></span>
+    <h3 id="gpTitle" class="modal-title"></h3>
+    <p id="gpLoc" style="color:var(--dark-soft);font-size:.88rem;margin:.3rem 0 .5rem;"></p>
+    <p id="gpPrecio" class="modal-precio"></p>
+
+    <div id="gpFotos" style="display:flex;gap:.5rem;overflow-x:auto;margin:1rem 0;"></div>
+    <div class="modal-features-grid" id="gpFeatures"></div>
+    <p id="gpDesc" style="font-size:.9rem;color:var(--dark-soft);margin:1rem 0;line-height:1.6;"></p>
+    <div class="modal-amenidades" id="gpAmen"></div>
+    <div id="gpMapa" style="margin-top:1rem;border-radius:var(--radius);overflow:hidden;border:1px solid var(--cream-dark);"></div>
+
+    <div style="margin-top:1.5rem;background:var(--cream);border-radius:var(--radius);padding:1.25rem;">
+      <p style="font-weight:700;font-size:.9rem;margin-bottom:.75rem;">📤 Compartir esta propiedad</p>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+        <button class="share-btn share-wp"   onclick="compartir('whatsapp')">WhatsApp</button>
+        <button class="share-btn share-fb"   onclick="compartir('facebook')">Facebook</button>
+        <button class="share-btn share-copy" onclick="copiarFicha()">Copiar ficha</button>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;font-size:.78rem;color:var(--dark-soft);background:rgba(184,150,62,.08);border-radius:6px;padding:.75rem;">
+      Si esta propiedad se vende a través de tu gestión, recibirás una comisión. Recuerda siempre presentarte con tu <strong style="color:var(--gold);">PENKA_ID</strong>.
+    </div>
+  </div>
+</div>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard-gestor.js"></script>
+</body>
+</html>

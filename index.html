@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PNK Inmobiliaria – Región de Coquimbo</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/navbar.css"/>
+  <link rel="stylesheet" href="css/hero.css"/>
+  <link rel="stylesheet" href="css/home.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-p">PNK</span>
+      <span class="logo-sub">Inmobiliaria</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Inicio</a></li>
+      <li><a href="pages/propiedades.html">Propiedades</a></li>
+      <li><a href="pages/registro-propietario.html">Registrar Propietario</a></li>
+      <li><a href="pages/registro-gestor.html">Registrar Gestor</a></li>
+      <li><a href="pages/login.html" class="btn-nav">Ingresar</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Inicio</a>
+    <a href="pages/propiedades.html">Propiedades</a>
+    <a href="pages/login.html" id="mobileLoginLink">Ingresar</a>
+    <a href="pages/registro-propietario.html" id="mobilePropLink">Registrarme como Propietario</a>
+    <a href="pages/registro-gestor.html" id="mobileGestLink">Registrarme como Gestor</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-shape s1"></div>
+    <div class="hero-shape s2"></div>
+    <div class="hero-shape s3"></div>
+  </div>
+  <div class="hero-content">
+    <span class="hero-tag">Región de Coquimbo · La Serena · Ovalle · Illapel</span>
+    <h1 class="hero-title">Tu propiedad<br/><em>merece más</em></h1>
+    <p class="hero-sub">La plataforma inmobiliaria que conecta propietarios, compradores y gestores freelance en la Región de Coquimbo. Publica, descubre y comisiona.</p>
+    <div class="search-box">
+      <select class="sb-select" id="sbProvincia">
+        <option value="">Provincia</option>
+        <option>Elqui</option>
+        <option>Limarí</option>
+        <option>Choapa</option>
+      </select>
+      <select class="sb-select" id="sbComuna">
+        <option value="">Comuna</option>
+        <option>La Serena</option>
+        <option>Coquimbo</option>
+        <option>Ovalle</option>
+        <option>Illapel</option>
+        <option>Salamanca</option>
+      </select>
+      <select class="sb-select" id="sbTipo">
+        <option value="">Tipo</option>
+        <option>Casa</option>
+        <option>Departamento</option>
+        <option>Terreno</option>
+      </select>
+      <button class="btn-search" onclick="irBuscar()">Buscar</button>
+    </div>
+  </div>
+  <div class="hero-img-wrap" id="heroCards">
+    <div class="hero-img-card card1">
+      <div class="prop-thumb t1"></div>
+      <div class="prop-info">
+        <span class="prop-tipo">Casa</span>
+        <p class="prop-lugar">El Milagro, La Serena</p>
+        <strong class="prop-precio">$154.000.000</strong>
+      </div>
+    </div>
+    <div class="hero-img-card card2">
+      <div class="prop-thumb t2"></div>
+      <div class="prop-info">
+        <span class="prop-tipo">Depto</span>
+        <p class="prop-lugar">Centro, Coquimbo</p>
+        <strong class="prop-precio">2.800 UF</strong>
+      </div>
+    </div>
+    <div class="hero-img-card card3">
+      <div class="prop-thumb t3"></div>
+      <div class="prop-info">
+        <span class="prop-tipo">Terreno</span>
+        <p class="prop-lugar">Ovalle Centro</p>
+        <strong class="prop-precio">$38.000.000</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-bar">
+  <div class="stat"><span class="stat-n" id="statProps">–</span><span class="stat-l">Propiedades</span></div>
+  <div class="stat-div"></div>
+  <div class="stat"><span class="stat-n" id="statGestores">–</span><span class="stat-l">Gestores Activos</span></div>
+  <div class="stat-div"></div>
+  <div class="stat"><span class="stat-n">3</span><span class="stat-l">Provincias</span></div>
+  <div class="stat-div"></div>
+  <div class="stat"><span class="stat-n" id="statPropietarios">–</span><span class="stat-l">Propietarios</span></div>
+</section>
+
+<section class="how">
+  <div class="section-header">
+    <span class="sec-tag">Proceso</span>
+    <h2>¿Cómo funciona PNK?</h2>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">01</div><h3>Regístrate</h3><p>Crea tu cuenta como Propietario o Gestor Free. Verificamos tus antecedentes para garantizar confianza.</p></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">02</div><h3>Publica o Capta</h3><p>Sube tu inmueble con fotos y detalles. Como Gestor capta propiedades y gana tu PENKA_ID.</p></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">03</div><h3>Conecta</h3><p>Compradores encuentran la propiedad ideal. Gestores pueden ofrecer cualquier inmueble.</p></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><div class="step-num">04</div><h3>¡Comisiona!</h3><p>Cuando el negocio se cierra, el Gestor recibe su comisión. Todos ganan.</p></div>
+  </div>
+</section>
+
+<section class="featured">
+  <div class="section-header">
+    <span class="sec-tag">Destacadas</span>
+    <h2>Propiedades en vitrina</h2>
+    <a href="pages/propiedades.html" class="ver-todas">Ver todas →</a>
+  </div>
+  <div class="props-grid" id="propsDestacadas">
+    <div class="prop-card">
+      <div class="pc-img pi1"><span class="pc-badge">Casa</span><span class="pc-cod">Cód: C0125457</span></div>
+      <div class="pc-body">
+        <h4>Casa Sector El Milagro</h4>
+        <p class="pc-loc">📍 El Milagro, La Serena – Prov. Elqui</p>
+        <div class="pc-features"><span>🛏 3 dorm.</span><span>🚿 2 baños</span><span>📐 120 m²</span><span>🅿 Estac.</span></div>
+        <div class="pc-footer">
+          <div><p class="pc-price">$154.000.000</p><p class="pc-uf">3.850 UF</p></div>
+          <a href="pages/propiedades.html" class="btn-ver">Quiero saber más</a>
+        </div>
+      </div>
+    </div>
+    <div class="prop-card">
+      <div class="pc-img pi2"><span class="pc-badge">Departamento</span><span class="pc-cod">Cód: D0234891</span></div>
+      <div class="pc-body">
+        <h4>Depto Centro Coquimbo</h4>
+        <p class="pc-loc">📍 Centro, Coquimbo – Prov. Elqui</p>
+        <div class="pc-features"><span>🛏 2 dorm.</span><span>🚿 1 baño</span><span>📐 68 m²</span><span>🏪 Bodega</span></div>
+        <div class="pc-footer">
+          <div><p class="pc-price">$112.000.000</p><p class="pc-uf">2.800 UF</p></div>
+          <a href="pages/propiedades.html" class="btn-ver">Quiero saber más</a>
+        </div>
+      </div>
+    </div>
+    <div class="prop-card">
+      <div class="pc-img pi3"><span class="pc-badge">Terreno</span><span class="pc-cod">Cód: T0389012</span></div>
+      <div class="pc-body">
+        <h4>Terreno Ovalle Centro</h4>
+        <p class="pc-loc">📍 Centro, Ovalle – Prov. Limarí</p>
+        <div class="pc-features"><span>📐 5000 m²</span></div>
+        <div class="pc-footer">
+          <div><p class="pc-price">$38.000.000</p><p class="pc-uf">950 UF</p></div>
+          <a href="pages/propiedades.html" class="btn-ver">Quiero saber más</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-gestor">
+  <div class="cta-content">
+    <span class="sec-tag light">¿Quieres generar ingresos extra?</span>
+    <h2>Conviértete en<br/><em>Gestor Inmobiliario Free</em></h2>
+    <p>Obtén tu <strong>PENKA_ID</strong>, ofrece cualquier propiedad de la plataforma y comisiona cuando el negocio se cierre. Sin límites, sin horarios.</p>
+    <a href="pages/registro-gestor.html" class="btn-cta">Registrarme como Gestor</a>
+  </div>
+  <div class="cta-deco">
+    <div class="deco-card dc1">
+      <p class="dc-label">Comisión estimada</p>
+      <p class="dc-val">$2.310.000</p>
+      <p class="dc-sub">Por venta de $154M</p>
+    </div>
+    <div class="deco-card dc2">
+      <p class="dc-label">Tu PENKA_ID</p>
+      <p class="dc-val penka">PNK-00421</p>
+      <p class="dc-sub">Activo y listo</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-p">PNK</span><span class="logo-sub"> Inmobiliaria</span>
+      <p>La plataforma inmobiliaria de la Región de Coquimbo.</p>
+    </div>
+    <div class="footer-links">
+      <h5>Plataforma</h5>
+      <a href="pages/propiedades.html">Ver Propiedades</a>
+      <a href="pages/registro-propietario.html">Registrarme como Propietario</a>
+      <a href="pages/registro-gestor.html">Registrarme como Gestor</a>
+      <a href="pages/login.html">Ingresar</a>
+    </div>
+    <div class="footer-links">
+      <h5>Admin</h5>
+      <a href="pages/dashboard.html">Dashboard</a>
+      <a href="pages/crud-usuarios.html">Gestión de Usuarios</a>
+      <a href="pages/crud-propiedades.html">Gestión de Propiedades</a>
+    </div>
+    <div class="footer-contact">
+      <h5>Contacto</h5>
+      <p>contacto@pnkinmobiliaria.cl</p>
+      <p>Región de Coquimbo, Chile</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 PNK Inmobiliaria. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script src="js/images.js"></script>
+<script src="js/db.js"></script>
+<script src="js/main.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

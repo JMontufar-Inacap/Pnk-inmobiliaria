@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Gestión de Usuarios</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo"><span class="logo-p">PNK</span><span class="logo-sub">Inmobiliaria</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="crud-usuarios.html" class="active">Usuarios</a></li>
+      <li><a href="crud-propiedades.html">Propiedades</a></li>
+      <li><a href="../index.html">Ver Sitio</a></li>
+      <li><a href="#" onclick="cerrarSesion()" class="btn-nav btn-nav-alt">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-header">
+      <p class="dash-user-name" id="sidebarNombre">–</p>
+      <span class="dash-user-role">Administrador</span>
+    </div>
+    <nav class="dash-nav">
+      <span class="dash-nav-section">Sidebar</span>
+      <a href="dashboard.html"> Dashboard</a>
+      <a href="crud-usuarios.html" class="active">Usuarios</a>
+      <a href="crud-propiedades.html">Propiedades</a>
+    </nav>
+    <div class="dash-logout"><a href="#" onclick="cerrarSesion()">Cerrar sesión</a></div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h2>Gestión de Usuarios</h2>
+        <p style="color:var(--dark-soft);font-size:.88rem;">Propietarios y Gestores Inmobiliarios</p>
+      </div>
+      <button class="btn-action" onclick="abrirModalNuevo()">+ Nuevo Usuario</button>
+    </div>
+
+    <div class="filter-bar">
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Tipo</label>
+        <select id="fRol" onchange="render()">
+          <option value="">Todos</option>
+          <option value="propietario">Propietario</option>
+          <option value="gestor">Gestor Free</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Estado</label>
+        <select id="fEstado" onchange="render()">
+          <option value="">Todos</option>
+          <option value="activo">Activo</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Buscar</label>
+        <input type="text" id="fBuscar" placeholder="Nombre o correo…" oninput="render()" style="min-width:200px;"/>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <h4>Usuarios Registrados</h4>
+        <span id="totalLabel" style="font-size:.82rem;color:var(--dark-soft);"></span>
+      </div>
+      <div id="tablaUsuarios"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalVer">
+  <div class="modal" style="max-width:500px;">
+    <button class="modal-close" onclick="cerrarModal('modalVer')">✕</button>
+    <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;">
+      <div id="verAvatar" style="width:64px;height:64px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:white;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-weight:700;"></div>
+      <div><h3 id="verNombre" style="font-size:1.5rem;"></h3><p id="verRolEstado" style="color:var(--dark-soft);font-size:.88rem;margin-top:.3rem;"></p></div>
+    </div>
+    <div class="modal-features-grid" id="verDatos"></div>
+    <div style="display:flex;gap:1rem;margin-top:1rem;">
+      <button class="btn-action" onclick="cerrarModal('modalVer')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalForm">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-close" onclick="cerrarModal('modalForm')">✕</button>
+    <h3 id="modalFormTitle" style="font-size:1.6rem;margin-bottom:1.5rem;"></h3>
+    <div id="modalFormMsg" style="display:none;"></div>
+    <div class="form-grid">
+      <div class="field" id="campoRut">
+        <label>RUT *</label>
+        <input type="text" id="fmRut" placeholder="12.345.678-9"/>
+      </div>
+      <div class="field">
+        <label>Nombre Completo *</label>
+        <input type="text" id="fmNombre" placeholder="Nombre completo"/>
+      </div>
+      <div class="field">
+        <label>Correo *</label>
+        <input type="email" id="fmCorreo" placeholder="correo@ejemplo.cl"/>
+      </div>
+      <div class="field">
+        <label>Teléfono</label>
+        <input type="tel" id="fmTelefono" placeholder="+56 9 ..."/>
+      </div>
+      <div class="field">
+        <label>Tipo de usuario *</label>
+        <select id="fmRol">
+          <option value="propietario">Propietario</option>
+          <option value="gestor">Gestor Free</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="fmSexo">
+          <option value="">Seleccionar</option>
+          <option>Masculino</option><option>Femenino</option><option>Prefiero no indicar</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estado</label>
+        <select id="fmEstado">
+          <option value="activo">Activo</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="field" id="campoPassword">
+        <label>Contraseña *</label>
+        <input type="password" id="fmPassword" placeholder="Contraseña inicial"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+      <button class="btn-action" id="modalFormBtn" onclick="guardarUsuario()">Guardar</button>
+      <button class="btn-action secondary" onclick="cerrarModal('modalForm')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/crud-usuarios.js"></script>
+</body>
+</html>

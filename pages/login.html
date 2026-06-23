@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Ingresar</title>
+  <link rel="stylesheet" href="../css/styles.css"/> 
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link rel="stylesheet" href="../css/login.css"/>
+  <link rel="stylesheet" href="../css/forms.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-visual">
+    <a href="../index.html" class="login-brand"><em>PNK</em> Inmobiliaria</a>
+    <div class="login-visual-content">
+      <h2>La plataforma inmobiliaria de la <em>Región de Coquimbo</em></h2>
+      <p>Conectamos propietarios, compradores y gestores freelance.</p>
+      <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:1rem 1.5rem;">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:white;font-weight:700;" id="cntProps">–</p>
+          <p style="color:rgba(255,255,255,.5);font-size:.8rem;">Propiedades activas</p>
+        </div>
+        <div style="background:rgba(255,255,255,.08);border-radius:10px;padding:1rem 1.5rem;">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold-light);font-weight:700;" id="cntGestores">–</p>
+          <p style="color:rgba(255,255,255,.5);font-size:.8rem;">Gestores activos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-form-panel">
+    <div class="login-box" id="viewLogin">
+      <h2>Bienvenido/a</h2>
+      <p class="form-desc">Ingresa con tu correo y contraseña. Tu rol se detectará automáticamente.</p>
+      <div id="loginMsg" style="display:none;padding:.75rem 1rem;border-radius:6px;font-size:.88rem;margin-bottom:1rem;"></div>
+      <div class="form-grid" style="margin-top:1.2rem;">
+        <div class="field full">
+          <label>Correo Electrónico</label>
+          <input type="email" id="correo" placeholder="correo@ejemplo.cl" autofocus maxlength="50"/>
+        </div>
+        <div class="field full">
+          <label>Contraseña</label>
+          <input type="password" id="password" placeholder="••••••••" maxlength="50"/>
+        </div>
+      </div>
+      <a href="#" class="recover-link" onclick="showView('viewRecover');return false;">¿Olvidé mi contraseña?</a>
+      <button class="btn-submit" onclick="doLogin()">Ingresar</button>
+      <p class="form-footer">
+        ¿No tienes cuenta?
+        <a href="registro-propietario.html">Soy Propietario</a> ·
+        <a href="registro-gestor.html">Soy Gestor</a>
+      </p>
+    </div>
+
+    <div class="login-box" id="viewRecover" style="display:none;">
+      <a href="#" onclick="showView('viewLogin');return false;" style="color:var(--terracotta);font-size:.88rem;font-weight:600;display:inline-block;margin-bottom:1.5rem;">← Volver</a>
+      <h2>Recuperar contraseña</h2>
+      <p class="form-desc">Ingresa tu correo y te enviaremos las instrucciones.</p>
+      <div class="form-grid">
+        <div class="field full">
+          <label>Correo Electrónico</label>
+          <input type="email" id="recoverCorreo" placeholder="correo@ejemplo.cl" maxlength="50"/>
+        </div>
+      </div>
+      <button class="btn-submit" style="margin-top:1.2rem;" onclick="doRecover()">Enviar instrucciones</button>
+    </div>
+
+    <div class="login-box" id="viewRecoverOk" style="display:none;text-align:center;">
+      <div style="font-size:3rem;margin-bottom:1rem;">📧</div>
+      <h2>¡Correo enviado!</h2>
+      <p class="form-desc" style="margin-bottom:2rem;">Si tu correo está registrado recibirás las instrucciones en minutos.</p>
+      <button class="btn-submit" style="width:auto;padding:.75rem 2rem;" onclick="showView('viewLogin')">Volver al ingreso</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/login.js"></script>

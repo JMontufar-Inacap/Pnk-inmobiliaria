@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Propiedades</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link rel="stylesheet" href="../css/propiedades.css"/>
+  <link rel="stylesheet" href="../css/home.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo">
+      <span class="logo-p">PNK</span>
+      <span class="logo-sub">Inmobiliaria</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="propiedades.html" class="active">Propiedades</a></li>
+      <li><a href="registro-propietario.html">Registrar Propietario</a></li>
+      <li><a href="registro-gestor.html">Registrar Gestor</a></li>
+      <li><a href="login.html" class="btn-nav">Ingresar</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">Inicio</a>
+    <a href="propiedades.html">Propiedades</a>
+    <a href="login.html" id="mobileAuthLink">Ingresar</a>
+  </div>
+</nav>
+
+<div class="props-page">
+  <div class="props-page-header">
+    <h2>Propiedades disponibles</h2>
+    <p style="color:var(--dark-soft);">Región de Coquimbo – Provincias Elqui, Limarí y Choapa</p>
+  </div>
+
+  <div class="filter-bar">
+    <div style="display:flex;flex-direction:column;gap:.3rem;">
+      <label>Provincia</label>
+      <select id="fProvincia" onchange="poblarComunas(); buscar()">
+        <option value="">Todas</option>
+        <option>Elqui</option>
+        <option>Limarí</option>
+        <option>Choapa</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.3rem;">
+      <label>Comuna</label>
+      <select id="fComuna" onchange="buscar()">
+        <option value="">Todas</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.3rem;">
+      <label>Sector</label>
+      <input
+        type="text" id="fSector"
+        placeholder="Ej: El Milagro"
+        style="min-width:140px;"
+        oninput="buscar()"
+      />
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.3rem;">
+      <label>Tipo</label>
+      <select id="fTipo" onchange="buscar()">
+        <option value="">Todos</option>
+        <option>Casa</option>
+        <option>Departamento</option>
+        <option>Terreno</option>
+      </select>
+    </div>
+    <button class="btn-search" style="align-self:flex-end;" onclick="buscar()">Buscar</button>
+    <button class="btn-search" style="align-self:flex-end;background:var(--dark-soft);" onclick="limpiar()">Limpiar</button>
+  </div>
+
+  <p id="resultCount" style="color:var(--dark-soft);margin-bottom:1.5rem;font-size:.9rem;"></p>
+
+  <div class="props-grid" id="propsGrid"></div>
+</div>
+
+<div class="modal-overlay" id="propModal">
+  <div class="modal" style="max-width:700px;">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+    <span style="font-size:.75rem;color:var(--dark-soft);text-transform:uppercase;letter-spacing:.06em;" id="mCod"></span>
+    <h3 class="modal-title" id="mTitle"></h3>
+    <p style="color:var(--dark-soft);font-size:.88rem;margin:.3rem 0 .5rem;" id="mLoc"></p>
+    <p class="modal-precio" id="mPrecio"></p>
+    <p style="font-size:.75rem;color:var(--dark-soft);margin-bottom:1rem;" id="mFecha"></p>
+
+    <div class="modal-features-grid" id="mFeatures"></div>
+    <p style="font-size:.9rem;color:var(--dark-soft);margin:1rem 0;" id="mDesc"></p>
+    <div class="modal-amenidades" id="mAmen"></div>
+    <div class="modal-map">🗺 Ubicación – <span id="mDireccion"></span></div>
+
+    <div style="margin-top:1.5rem;background:var(--cream);border-radius:var(--radius);padding:1.25rem;">
+      <p style="font-weight:600;margin-bottom:.75rem;">📅 Solicitar una visita</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;" id="visitaForm">
+        <input type="text"  id="vNombre"   placeholder="Tu nombre"        style="padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;background:white;"/>
+        <input type="email" id="vCorreo"   placeholder="Tu correo"        style="padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;background:white;"/>
+        <input type="tel"   id="vTelefono" placeholder="Tu teléfono"      style="padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;background:white;"/>
+        <input type="text"  id="vFecha"    placeholder="Fecha preferida"  style="padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;background:white;"/>
+        <textarea id="vMensaje" placeholder="Mensaje opcional…" rows="2"
+          style="grid-column:1/-1;padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;resize:vertical;background:white;"></textarea>
+        <button onclick="enviarVisita()" class="btn-submit" style="grid-column:1/-1;margin:0;">Enviar solicitud</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+      <button class="share-btn share-wp"   onclick="compartir('whatsapp')">WhatsApp</button>
+      <button class="share-btn share-fb"   onclick="compartir('facebook')">Facebook</button>
+      <button class="share-btn share-copy" onclick="copiarLink()">Copiar enlace</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-p">PNK</span><span class="logo-sub"> Inmobiliaria</span>
+      <p>Región de Coquimbo.</p>
+    </div>
+    <div class="footer-links">
+      <h5>Plataforma</h5>
+      <a href="propiedades.html">Propiedades</a>
+      <a href="registro-propietario.html">Soy Propietario</a>
+      <a href="registro-gestor.html">Soy Gestor</a>
+    </div>
+    <div class="footer-links">
+      <h5>Acceso</h5>
+      <a href="login.html">Ingresar</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="footer-contact">
+      <h5>Contacto</h5>
+      <p>contacto@pnkinmobiliaria.cl</p>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 PNK Inmobiliaria.</p></div>
+</footer>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/propiedades.js"></script>
+</body>
+</html>

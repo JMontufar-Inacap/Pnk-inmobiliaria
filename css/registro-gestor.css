@@ -1,0 +1,62 @@
+.page-form {
+  min-height: 100vh;
+  padding: 100px 2rem 4rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.form-wrap {
+  max-width: 700px;
+}
+
+.sec-tag {
+  background: rgba(184,150,62,.15);
+  color: var(--gold);
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.form-note {
+  background: rgba(184,150,62,.08);
+  border-color: rgba(184,150,62,.25);
+  color: #7A5F22;
+}
+
+.btn-submit {
+  background: var(--dark);
+}
+
+.btn-submit:hover {
+  background: var(--dark-mid);
+}
+
+.modal {
+  text-align: center;
+  max-width: 440px;
+}
+
+.modal .emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal h3 {
+  font-size: 1.8rem;
+  margin-bottom: .5rem;
+}
+
+.modal .penka-preview {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.field-error {
+  display: none;
+  color: #DC2626;
+  font-size: .75rem;
+  margin-top: .3rem;
+  line-height: 1.4;
+}

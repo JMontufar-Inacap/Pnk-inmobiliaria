@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Gestión de Propiedades</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo"><span class="logo-p">PNK</span><span class="logo-sub">Inmobiliaria</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="crud-usuarios.html">Usuarios</a></li>
+      <li><a href="crud-propiedades.html" class="active">Propiedades</a></li>
+      <li><a href="../index.html">Ver Sitio</a></li>
+      <li><a href="#" onclick="cerrarSesion()" class="btn-nav btn-nav-alt">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-header">
+      <p class="dash-user-name" id="sidebarNombre">–</p>
+      <span class="dash-user-role">Administrador</span>
+    </div>
+    <nav class="dash-nav">
+      <span class="dash-nav-section">Sidebar</span>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="crud-usuarios.html">Usuarios</a>
+      <a href="crud-propiedades.html" class="active">Propiedades</a>
+    </nav>
+    <div class="dash-logout"><a href="#" onclick="cerrarSesion()">Cerrar sesión</a></div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h2>Gestión de Propiedades</h2>
+        <p style="color:var(--dark-soft);font-size:.88rem;">Publicar, editar y administrar inmuebles</p>
+      </div>
+      <button class="btn-action" onclick="abrirModalNuevo()">+ Nueva Propiedad</button>
+    </div>
+
+    <div class="filter-bar">
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Tipo</label>
+        <select id="fTipo" onchange="render()">
+          <option value="">Todos</option>
+          <option>Casa</option><option>Departamento</option><option>Terreno</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Provincia</label>
+        <select id="fProvincia" onchange="render()">
+          <option value="">Todas</option>
+          <option>Elqui</option><option>Limarí</option><option>Choapa</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Estado</label>
+        <select id="fEstado" onchange="render()">
+          <option value="">Todos</option>
+          <option value="activa">Activa</option>
+          <option value="revision">En Revisión</option>
+          <option value="inactiva">Inactiva</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.3rem;">
+        <label>Buscar</label>
+        <input type="text" id="fBuscar" placeholder="Código, sector…" oninput="render()" style="min-width:160px;"/>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <h4>Propiedades</h4>
+        <span id="totalLabel" style="font-size:.82rem;color:var(--dark-soft);"></span>
+      </div>
+      <div id="tablaProps"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalVer">
+  <div class="modal" style="max-width:680px;">
+    <button class="modal-close" onclick="cerrarModal('modalVer')">✕</button>
+    <span id="vCod" style="font-size:.75rem;color:var(--dark-soft);text-transform:uppercase;letter-spacing:.06em;"></span>
+    <h3 id="vTitle" class="modal-title"></h3>
+    <p id="vLoc" style="color:var(--dark-soft);font-size:.88rem;margin:.3rem 0 .5rem;"></p>
+    <p id="vPrecio" class="modal-precio"></p>
+    <div class="modal-features-grid" id="vFeatures"></div>
+    <p id="vDesc" style="font-size:.9rem;color:var(--dark-soft);margin:1rem 0;"></p>
+    <div class="modal-amenidades" id="vAmen"></div>
+    <div style="display:flex;gap:1rem;margin-top:1rem;">
+      <button class="btn-action" onclick="cerrarModal('modalVer')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalForm">
+  <div class="modal" style="max-width:750px;">
+    <button class="modal-close" onclick="cerrarModal('modalForm')">✕</button>
+    <h3 id="modalFormTitle" style="font-size:1.6rem;margin-bottom:1.5rem;"></h3>
+    <div id="modalFormMsg" style="display:none;"></div>
+    <div class="form-grid">
+      <h3 class="form-section-title">Identificación</h3>
+      <div class="field">
+        <label>Tipo *</label>
+        <select id="fmTipo">
+          <option>Casa</option><option>Departamento</option><option>Terreno</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estado</label>
+        <select id="fmEstado">
+          <option value="activa">Activa</option>
+          <option value="revision">En Revisión</option>
+          <option value="inactiva">Inactiva</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Propietario</label>
+        <select id="fmPropietario"></select>
+      </div>
+
+      <h3 class="form-section-title">Ubicación</h3>
+      <div class="field">
+        <label>Provincia *</label>
+        <select id="fmProvincia">
+          <option>Elqui</option><option>Limarí</option><option>Choapa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Comuna *</label>
+        <input type="text" id="fmComuna" placeholder="Ej: La Serena"/>
+      </div>
+      <div class="field">
+        <label>Sector</label>
+        <input type="text" id="fmSector" placeholder="Ej: El Milagro"/>
+      </div>
+      <div class="field">
+        <label>Dirección</label>
+        <input type="text" id="fmDireccion" placeholder="Ej: Av. El Milagro 123"/>
+      </div>
+
+      <h3 class="form-section-title">Características</h3>
+      <div class="field">
+        <label>Dormitorios</label>
+        <input type="number" id="fmDorm" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Baños</label>
+        <input type="number" id="fmBanos" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Área Terreno (m²)</label>
+        <input type="number" id="fmTerreno" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Área Construida (m²)</label>
+        <input type="number" id="fmConstruida" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Precio $ *</label>
+        <input type="number" id="fmPrecioClp" placeholder="154000000" min="0"/>
+      </div>
+      <div class="field">
+        <label>Precio UF *</label>
+        <input type="number" id="fmPrecioUf" placeholder="3850" min="0" step="0.01"/>
+      </div>
+      <div class="field full">
+        <label>Descripción</label>
+        <textarea id="fmDesc" rows="3" placeholder="Describe la propiedad…"></textarea>
+      </div>
+
+      <h3 class="form-section-title">Comodidades</h3>
+      <div class="field full">
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" id="fmBodega"/><span>🏪 Bodega</span></label>
+          <label class="check-item"><input type="checkbox" id="fmEstac"/><span>🅿 Estacionamiento</span></label>
+          <label class="check-item"><input type="checkbox" id="fmLogia"/><span>🪣 Logia</span></label>
+          <label class="check-item"><input type="checkbox" id="fmCocina"/><span>🍳 Cocina amoblada</span></label>
+          <label class="check-item"><input type="checkbox" id="fmAnte"/><span>🌿 Antejardín</span></label>
+          <label class="check-item"><input type="checkbox" id="fmPatio"/><span>🌳 Patio trasero</span></label>
+          <label class="check-item"><input type="checkbox" id="fmPiscina"/><span>🏊 Piscina</span></label>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+      <button class="btn-action" id="modalFormBtn" onclick="guardarPropiedad()">Guardar</button>
+      <button class="btn-action secondary" onclick="cerrarModal('modalForm')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/crud-propiedades.js"></script>
+</body>
+</html>

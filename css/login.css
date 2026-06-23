@@ -1,0 +1,48 @@
+.login-page { min-height: 100vh; display: flex; background: var(--dark); }
+
+.login-visual {
+  flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 3rem;
+  background: linear-gradient(160deg, var(--terracotta-dark) 0%, #3A1A10 100%);
+  position: relative; overflow: hidden;
+}
+.login-visual::before {
+  content: ''; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.login-visual-content { position: relative; }
+.login-visual h2 { color: var(--white); font-size: 2.5rem; margin-bottom: 1rem; }
+.login-visual p  { color: rgba(255,255,255,.65); max-width: 360px; }
+.login-brand { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--white); margin-bottom: auto; position: relative; }
+.login-brand em { color: var(--gold-light); font-style: normal; }
+
+.login-form-panel {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 3rem; background: var(--cream);
+}
+.login-box { width: 100%; max-width: 400px; }
+.login-box h2 { margin-bottom: .4rem; }
+.login-box .form-desc { margin-bottom: 2rem; }
+
+.login-options { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+.login-opt {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--cream-dark); border-radius: var(--radius);
+  cursor: pointer; transition: border-color .2s; background: var(--white);
+}
+.login-opt:hover, .login-opt.selected { border-color: var(--terracotta); }
+.login-opt-icon  { font-size: 1.4rem; }
+.login-opt-label { font-size: .82rem; color: var(--dark-soft); font-weight: 500; }
+.login-opt-title { font-weight: 700; font-size: .95rem; }
+
+.login-divider { text-align: center; margin: 1rem 0; color: var(--dark-soft); font-size: .85rem; position: relative; }
+.login-divider::before, .login-divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: var(--cream-dark); }
+.login-divider::before { left: 0; }
+.login-divider::after  { right: 0; }
+
+.recover-link { display: block; text-align: right; margin-top: .5rem; font-size: .82rem; color: var(--terracotta); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .login-visual { display: none; }
+}

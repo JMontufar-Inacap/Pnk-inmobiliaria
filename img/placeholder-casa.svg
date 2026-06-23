@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#C4614A"/>
+  <polygon points="200,60 80,160 320,160" fill="#A04535"/>
+  <rect x="120" y="160" width="160" height="100" fill="#8B3A2A"/>
+  <rect x="165" y="190" width="70" height="70" fill="#C4614A"/>
+  <text x="200" y="290" font-family="Georgia,serif" font-size="14" fill="rgba(255,255,255,0.5)" text-anchor="middle">Casa</text>
+</svg>

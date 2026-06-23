@@ -1,0 +1,112 @@
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Registrarme como Gestor</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link rel="stylesheet" href="../css/forms.css"/>
+  <link rel="stylesheet" href="../css/registro-gestor.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo"><span class="logo-p">PNK</span><span class="logo-sub">Inmobiliaria</span></a>
+    <ul class="nav-links">
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="propiedades.html">Propiedades</a></li>
+      <li><a href="registro-propietario.html">Registrar Propietario</a></li>
+      <li><a href="registro-gestor.html">Registrar Gestor</a></li>
+      <li><a href="login.html" class="btn-nav">Ingresar</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-form lobby-bg">
+  <div class="form-wrap" style="max-width:640px;">
+    <span class="sec-tag" style="background:rgba(184,150,62,.15);color:var(--gold);margin-bottom:1rem;display:inline-block;">Gestor Inmobiliario Free</span>
+    <h2>Quiero obtener mi <em>PENKA_ID</em></h2>
+    <p class="form-desc">Postula como Gestor Free. Una vez aprobado podrás ofrecer cualquier propiedad y comisionar al cerrar un negocio.</p>
+
+    <div class="form-grid">
+      <h3 class="form-section-title">Datos Personales</h3>
+
+      <div class="field">
+        <label>RUT *</label>
+        <input type="text" id="rut" placeholder="12.345.678-9" maxlength="12"/>
+        <span class="field-error" id="err-rut"></span>
+      </div>
+
+      <div class="field">
+        <label>Nombre Completo *</label>
+        <input type="text" id="nombre" placeholder="María López Díaz" maxlength="50"/>
+        <span class="field-error" id="err-nombre"></span>
+      </div>
+
+      <div class="field">
+        <label>Fecha de Nacimiento *</label>
+        <input type="date" id="fecha_nac"/>
+        <span class="field-error" id="err-fecha_nac"></span>
+      </div>
+
+      <div class="field">
+        <label>Sexo *</label>
+        <select id="sexo">
+          <option value="">Seleccionar</option>
+          <option>Masculino</option>
+          <option>Femenino</option>
+          <option>Prefiero no indicar</option>
+        </select>
+        <span class="field-error" id="err-sexo"></span>
+      </div>
+
+      <div class="field">
+        <label>Correo Electrónico *</label>
+        <input type="email" id="correo" placeholder="correo@ejemplo.cl" autofocus maxlength="50"/>
+        <span class="field-error" id="err-correo"></span>
+      </div>
+
+      <div class="field">
+        <label>Teléfono Móvil *</label>
+        <input type="tel" id="telefono" placeholder="+56 9 1234 5678" maxlength="20"/>
+        <span class="field-error" id="err-telefono"></span>
+      </div>
+
+      <h3 class="form-section-title">Acceso a la Plataforma</h3>
+
+      <div class="field">
+        <label>Contraseña *</label>
+        <input type="password" id="password" placeholder="Mínimo 6 caracteres" maxlength="50"/>
+        <span class="field-error" id="err-password"></span>
+      </div>
+
+      <div class="field">
+        <label>Confirmar Contraseña *</label>
+        <input type="password" id="password2" placeholder="Repite la contraseña" maxlength="50"/>
+        <span class="field-error" id="err-password2"></span>
+      </div>
+
+      <div class="field full">
+        <label style="text-transform:none;font-size:.88rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;">
+          <input type="checkbox" id="terminos" style="accent-color:var(--terracotta);width:16px;height:16px;"/>
+          Acepto los <a href="#" style="color:var(--terracotta);">Términos y Condiciones</a> y el <a href="#" style="color:var(--terracotta);">Reglamento de Comisiones</a>.
+        </label>
+        <span class="field-error" id="err-terminos"></span>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="doRegistro()">Postular como Gestor Inmobiliario Free</button>
+    <p class="form-footer">¿Ya tienes cuenta? <a href="login.html">Ingresar aquí</a> · ¿Eres Propietario? <a href="registro-propietario.html">Regístrate aquí</a></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/registro-gestor.js"></script>
+</body>
+</html>

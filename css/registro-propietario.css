@@ -1,0 +1,59 @@
+.page-form {
+  min-height: 100vh;
+  padding: 100px 2rem 4rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.sec-tag {
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.checkbox-label {
+  font-size: .88rem;
+  text-transform: none;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  cursor: pointer;
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
+.checkbox-label input[type="checkbox"] {
+  accent-color: var(--terracotta);
+  width: 16px;
+  height: 16px;
+  margin-right: .4rem;
+  flex-shrink: 0;
+}
+
+.modal {
+  text-align: center;
+  max-width: 440px;
+}
+
+.modal .emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal h3 {
+  font-size: 1.8rem;
+  margin-bottom: .5rem;
+}
+
+.modal p {
+  color: var(--dark-soft);
+  margin-bottom: 1.5rem;
+}
+
+.field-error {
+  display: none;
+  color: #DC2626;
+  font-size: .75rem;
+  margin-top: .3rem;
+  line-height: 1.4;
+}

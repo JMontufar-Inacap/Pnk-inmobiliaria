@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo"><span class="logo-p">PNK</span><span class="logo-sub">Inmobiliaria</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="crud-usuarios.html">Usuarios</a></li>
+      <li><a href="crud-propiedades.html">Propiedades</a></li>
+      <li><a href="../index.html">Ver Sitio</a></li>
+      <li><a href="#" onclick="cerrarSesion()" class="btn-nav btn-nav-alt">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-header">
+      <p class="dash-user-name" id="sidebarNombre">–</p>
+      <span class="dash-user-role">Administrador</span>
+    </div>
+    <nav class="dash-nav">
+      <span class="dash-nav-section">Sidebar</span>
+      <a href="dashboard.html" class="active"> Dashboard</a>
+      <a href="crud-usuarios.html"> Usuarios</a>
+      <a href="crud-propiedades.html">Propiedades</a>
+    </nav>
+    <div class="dash-logout"><a href="#" onclick="cerrarSesion()">Cerrar sesión</a></div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h2>Dashboard</h2>
+        <p style="color:var(--dark-soft);font-size:.88rem;">Plataforma PNK Inmobiliaria – Región de Coquimbo</p>
+      </div>
+      <div class="dash-topbar-actions">
+        <a href="crud-usuarios.html" class="btn-action secondary">+ Usuario</a>
+        <a href="crud-propiedades.html" class="btn-action">+ Propiedad</a>
+      </div>
+    </div>
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <h4>Cuentas Pendientes de Activación</h4>
+        <a href="crud-usuarios.html" class="btn-action secondary" style="font-size:.82rem;padding:.45rem 1rem;">Ver todos</a>
+      </div>
+      <div id="tablaPendientes"></div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <h4>Propiedades Recientes</h4>
+        <a href="crud-propiedades.html" class="btn-action secondary" style="font-size:.82rem;padding:.45rem 1rem;">Administrar</a>
+      </div>
+      <div id="tablaProps"></div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:2rem;">
+      <div class="table-head">
+        <h4>Gestión de Imágenes</h4>
+        <span style="font-size:.82rem;color:var(--dark-soft);">Sube tus fotos reales (máx. 3 MB c/u)</span>
+      </div>
+      <div style="padding:1.5rem;">
+        <p style="font-size:.88rem;color:var(--dark-soft);margin-bottom:1.5rem;">
+          Las imágenes se guardan en el navegador. Al subir una foto real reemplaza el placeholder automáticamente en todo el sitio.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem;" id="panelImagenes"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

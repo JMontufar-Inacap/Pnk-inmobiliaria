@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PNK – Mi cuenta Propietario</title>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/navbar.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="logo"><span class="logo-p">PNK</span><span class="logo-sub">Inmobiliaria</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Inicio</a></li>
+      <li><a href="propiedades.html">Propiedades</a></li>
+      <li><a href="dashboard-propietario.html" class="active">Mi cuenta</a></li>
+      <li><a href="#" onclick="cerrarSesion()" class="btn-nav btn-nav-alt">Cerrar sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar">
+    <div class="dash-sidebar-header">
+      <p class="dash-user-name" id="sidebarNombre">–</p>
+      <span class="dash-user-role">Propietario</span>
+    </div>
+    <nav class="dash-nav">
+      <span class="dash-nav-section">Mi cuenta</span>
+      <a href="dashboard-propietario.html" class="active">Mis Propiedades</a>
+      <a href="#" onclick="abrirModalPropiedad(null)"><span class="nav-icon">➕</span> Publicar Propiedad</a>
+      <span class="dash-nav-section">Plataforma</span>
+      <a href="propiedades.html"><span class="nav-icon"></span> Ver todas las propiedades</a>
+    </nav>
+    <div class="dash-logout"><a href="#" onclick="cerrarSesion()">Cerrar sesión</a></div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <div>
+        <h2>Mis Propiedades</h2>
+        <p style="color:var(--dark-soft);font-size:.88rem;">Gestiona tus inmuebles publicados en PNK</p>
+      </div>
+      <button class="btn-action" onclick="abrirModalPropiedad(null)">+ Publicar Propiedad</button>
+    </div>
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="table-wrap">
+      <div class="table-head">
+        <h4>Mis inmuebles</h4>
+        <span id="totalLabel" style="font-size:.82rem;color:var(--dark-soft);"></span>
+      </div>
+      <div id="tablaProps"></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalProp">
+  <div class="modal" style="max-width:780px;">
+    <button class="modal-close" onclick="cerrarModal('modalProp')">✕</button>
+    <h3 id="modalPropTitle" style="font-size:1.6rem;margin-bottom:1.5rem;"></h3>
+    <div id="modalPropMsg" style="display:none;"></div>
+
+    <div class="form-grid">
+
+      <h3 class="form-section-title">Identificación</h3>
+      <div class="field">
+        <label>Tipo de Propiedad *</label>
+        <select id="fmTipo">
+          <option>Casa</option><option>Departamento</option><option>Terreno</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estado publicación</label>
+        <select id="fmEstado">
+          <option value="activa">Activa</option>
+          <option value="revision">Enviar a revisión</option>
+          <option value="inactiva">Inactiva</option>
+        </select>
+      </div>
+
+      <h3 class="form-section-title">Ubicación</h3>
+      <div class="field">
+        <label>Provincia *</label>
+        <select id="fmProvincia" onchange="poblarComunasModal()">
+          <option>Elqui</option><option>Limarí</option><option>Choapa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Comuna *</label>
+        <select id="fmComuna"></select>
+      </div>
+      <div class="field">
+        <label>Sector</label>
+        <input type="text" id="fmSector" placeholder="Ej: El Milagro"/>
+      </div>
+      <div class="field">
+        <label>Dirección exacta</label>
+        <input type="text" id="fmDireccion" placeholder="Ej: Av. El Milagro 123"/>
+      </div>
+
+      <h3 class="form-section-title">Características</h3>
+      <div class="field">
+        <label>Dormitorios</label>
+        <input type="number" id="fmDorm" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Baños</label>
+        <input type="number" id="fmBanos" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Área Total Terreno (m²)</label>
+        <input type="number" id="fmTerreno" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Área Construida (m²)</label>
+        <input type="number" id="fmConstruida" min="0" value="0"/>
+      </div>
+      <div class="field">
+        <label>Precio $ *</label>
+        <input type="number" id="fmPrecioClp" placeholder="154000000" min="0"/>
+      </div>
+      <div class="field">
+        <label>Precio UF *</label>
+        <input type="number" id="fmPrecioUf" placeholder="3850" step="0.01" min="0"/>
+      </div>
+      <div class="field full">
+        <label>Descripción</label>
+        <textarea id="fmDesc" rows="3" placeholder="Describe la propiedad, sectores cercanos, estado, etc."></textarea>
+      </div>
+
+      <h3 class="form-section-title">Comodidades</h3>
+      <div class="field full">
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" id="fmBodega"/><span>🏪 Bodega</span></label>
+          <label class="check-item"><input type="checkbox" id="fmEstac"/><span>🅿 Estacionamiento</span></label>
+          <label class="check-item"><input type="checkbox" id="fmLogia"/><span>🪣 Logia</span></label>
+          <label class="check-item"><input type="checkbox" id="fmCocina"/><span>🍳 Cocina amoblada</span></label>
+          <label class="check-item"><input type="checkbox" id="fmAnte"/><span>🌿 Antejardín</span></label>
+          <label class="check-item"><input type="checkbox" id="fmPatio"/><span>🌳 Patio trasero</span></label>
+          <label class="check-item"><input type="checkbox" id="fmPiscina"/><span>🏊 Piscina</span></label>
+        </div>
+      </div>
+
+      <h3 class="form-section-title">Fotografías (máx. 10)</h3>
+      <div class="field full">
+        <div id="fotosPrevias" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;"></div>
+        <label style="display:inline-flex;align-items:center;gap:.5rem;cursor:pointer;
+          background:var(--terracotta);color:white;border-radius:6px;padding:.55rem 1.1rem;
+          font-size:.85rem;font-weight:600;width:fit-content;">
+          📁 Agregar fotos
+          <input type="file" id="inputFotos" accept="image/*" multiple style="display:none;"
+            onchange="previsualizarFotos(this)"/>
+        </label>
+        <span class="file-hint" style="display:block;margin-top:.4rem;">JPG, PNG o WEBP. Máx. 3 MB por foto.</span>
+        <div id="fotosError" style="color:#EF4444;font-size:.82rem;margin-top:.3rem;display:none;"></div>
+      </div>
+
+      <h3 class="form-section-title">Ubicación en Mapa</h3>
+      <div class="field">
+        <label>Latitud</label>
+        <input type="number" id="fmLat" placeholder="-29.9027" step="0.0001"/>
+      </div>
+      <div class="field">
+        <label>Longitud</label>
+        <input type="number" id="fmLng" placeholder="-71.2519" step="0.0001"/>
+      </div>
+      <div class="field full" style="font-size:.82rem;color:var(--dark-soft);">
+        💡 Puedes obtener las coordenadas haciendo clic derecho en
+        <a href="https://maps.google.com" target="_blank" style="color:var(--terracotta);">Google Maps</a>
+        → "¿Qué hay aquí?".
+      </div>
+
+    </div>
+
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;">
+      <button class="btn-action" id="btnGuardarProp" onclick="guardarPropiedad()">Publicar Propiedad</button>
+      <button class="btn-action secondary" onclick="cerrarModal('modalProp')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalVer">
+  <div class="modal" style="max-width:700px;">
+    <button class="modal-close" onclick="cerrarModal('modalVer')">✕</button>
+    <span id="vCod" style="font-size:.75rem;color:var(--dark-soft);text-transform:uppercase;letter-spacing:.06em;"></span>
+    <h3 id="vTitle" class="modal-title"></h3>
+    <p id="vLoc" style="color:var(--dark-soft);font-size:.88rem;margin:.3rem 0 .5rem;"></p>
+    <p id="vPrecio" class="modal-precio"></p>
+    <p id="vFecha" style="font-size:.75rem;color:var(--dark-soft);margin-bottom:1rem;"></p>
+
+    <div id="vFotos" style="display:flex;gap:.5rem;overflow-x:auto;margin-bottom:1.2rem;"></div>
+
+    <div class="modal-features-grid" id="vFeatures"></div>
+    <p id="vDesc" style="font-size:.9rem;color:var(--dark-soft);margin:1rem 0;line-height:1.6;"></p>
+    <div class="modal-amenidades" id="vAmen"></div>
+
+    <div id="vMapa" style="border-radius:var(--radius);overflow:hidden;margin-top:1rem;border:1px solid var(--cream-dark);"></div>
+
+    <div style="display:flex;gap:1rem;margin-top:1.2rem;flex-wrap:wrap;">
+      <button class="btn-action secondary" onclick="cerrarModal('modalVer')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalEliminar">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:.75rem;">🗑</div>
+    <h3 style="font-size:1.5rem;margin-bottom:.5rem;">¿Eliminar propiedad?</h3>
+    <p id="msgEliminar" style="color:var(--dark-soft);margin-bottom:1.5rem;"></p>
+    <div style="display:flex;gap:1rem;justify-content:center;">
+      <button class="btn-action" style="background:#EF4444;" id="btnConfirmarEliminar">Sí, eliminar</button>
+      <button class="btn-action secondary" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/images.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/navbar-loader.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dashboard-propietario.js"></script>
+</body>
+</html>
