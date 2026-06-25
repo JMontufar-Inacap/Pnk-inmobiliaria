@@ -13,6 +13,17 @@ const COMUNAS = {
   Choapa: ['Illapel','Canela','Los Vilos','Salamanca']
 };
 
+const COORDS = {
+  'La Serena':    [-29.9027, -71.2519], 'Coquimbo':     [-29.9533, -71.3406],
+  'Andacollo':    [-30.2325, -71.0857], 'Vicuña':       [-30.0333, -70.7167],
+  'La Higuera':   [-29.4980, -71.2559], 'Paiguano':     [-30.0333, -70.5667],
+  'Ovalle':       [-30.5985, -71.1990], 'Combarbalá':   [-31.1833, -71.0167],
+  'Monte Patria': [-30.6939, -70.9643], 'Punitaqui':    [-30.8333, -71.2500],
+  'Río Hurtado':  [-30.4667, -70.7167], 'Illapel':      [-31.6356, -71.1685],
+  'Canela':       [-31.3978, -71.4500], 'Los Vilos':    [-31.9097, -71.5083],
+  'Salamanca':    [-31.7729, -70.9636],
+};
+
 function poblarComunasModal(selVal = '') {
   const prov = document.getElementById('fmProvincia').value;
   const sel  = document.getElementById('fmComuna');
@@ -20,9 +31,25 @@ function poblarComunasModal(selVal = '') {
     `<option ${c===selVal?'selected':''}>${c}</option>`).join('');
 }
 
-let editandoId      = null;
-let fotosActuales   = [];
+let editandoId       = null;
+let fotosActuales    = [];
 let fotoPrincipalIdx = 0;
+
+// Compresión de imágenes para no agotar localStorage
+function comprimirFoto(dataUrl, maxWidth = 1200, quality = 0.78) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio  = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = dataUrl;
+  });
+}
 
 function render() {
   const todas = PNK_DB.getPropiedades();
@@ -155,7 +182,7 @@ function abrirModalPropiedad(id) {
   document.body.style.overflow = 'hidden';
 }
 
-function previsualizarFotos(input) {
+async function previsualizarFotos(input) {
   const archivos   = Array.from(input.files);
   const errEl      = document.getElementById('fotosError');
   errEl.style.display = 'none';
@@ -170,28 +197,27 @@ function previsualizarFotos(input) {
 
   const aAgregar = archivos.slice(0, disponibles);
   if (archivos.length > disponibles) {
-    errEl.textContent   = `Solo se agregaron ${disponibles} foto(s). Límite máximo: 10.`;
+    errEl.textContent   = `Solo se agregarán ${disponibles} foto(s). Límite máximo: 10.`;
     errEl.style.display = 'block';
   }
 
-  let cargadas = 0;
-  aAgregar.forEach(file => {
+  for (const file of aAgregar) {
     if (file.size > 3 * 1024 * 1024) {
       errEl.textContent   = `"${file.name}" supera 3 MB y fue omitida.`;
       errEl.style.display = 'block';
-      cargadas++;
-      if (cargadas === aAgregar.length) renderFotosPrevias();
-      return;
+      continue;
     }
-    const reader = new FileReader();
-    reader.onload = e => {
-      fotosActuales.push(e.target.result);
-      cargadas++;
-      if (cargadas === aAgregar.length) renderFotosPrevias();
-    };
-    reader.readAsDataURL(file);
-  });
+    const dataUrl = await new Promise(res => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.readAsDataURL(file);
+    });
+    const compressed = await comprimirFoto(dataUrl);
+    fotosActuales.push(compressed);
+  }
+
   input.value = '';
+  renderFotosPrevias();
 }
 
 function renderFotosPrevias() {
@@ -203,13 +229,11 @@ function renderFotosPrevias() {
           style="width:80px;height:60px;object-fit:cover;border-radius:6px;
                  border:2px solid ${esPrincipal ? 'var(--terracotta)' : 'var(--cream-dark)'};
                  display:block;"/>
-
         <button onclick="eliminarFoto(${i})"
           title="Eliminar foto"
           style="position:absolute;top:-7px;right:-7px;background:#EF4444;color:white;border:none;
                  border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;
                  line-height:18px;text-align:center;padding:0;">✕</button>
-
         ${esPrincipal
           ? `<span style="display:block;margin-top:.25rem;font-size:.6rem;font-weight:700;
                color:var(--terracotta);letter-spacing:.02em;">★ Portada</span>`
@@ -244,19 +268,19 @@ function guardarPropiedad() {
   const comuna    = document.getElementById('fmComuna').value;
   const precioClp = document.getElementById('fmPrecioClp').value;
   const precioUf  = document.getElementById('fmPrecioUf').value;
+  const dorm      = Number(document.getElementById('fmDorm').value);
+  const banos     = Number(document.getElementById('fmBanos').value);
   const msg       = document.getElementById('modalPropMsg');
-  const dorm  = Number(document.getElementById('fmDorm').value);
-  const banos = Number(document.getElementById('fmBanos').value);
-  
-  if (dorm > 9 || banos > 9) {
-    msg.style.cssText = 'display:block;padding:.65rem 1rem;border-radius:6px;font-size:.85rem;margin-bottom:1rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;';
-    msg.textContent = 'Dormitorios y baños no pueden superar 9.';
-    return;
-  }
-  
+
   if (!comuna || !precioClp || !precioUf) {
     msg.style.cssText = 'display:block;padding:.65rem 1rem;border-radius:6px;font-size:.85rem;margin-bottom:1rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;';
     msg.textContent   = 'Comuna, precio $ y precio UF son obligatorios.';
+    return;
+  }
+
+  if (dorm > 9 || banos > 9) {
+    msg.style.cssText = 'display:block;padding:.65rem 1rem;border-radius:6px;font-size:.85rem;margin-bottom:1rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;';
+    msg.textContent   = 'Dormitorios y baños no pueden superar 9.';
     return;
   }
 
@@ -272,8 +296,8 @@ function guardarPropiedad() {
     sector:          document.getElementById('fmSector').value.trim(),
     direccion:       document.getElementById('fmDireccion').value.trim(),
     descripcion:     document.getElementById('fmDesc').value.trim(),
-    dormitorios:     Number(document.getElementById('fmDorm').value),
-    banos:           Number(document.getElementById('fmBanos').value),
+    dormitorios:     dorm,
+    banos:           banos,
     area_terreno:    Number(document.getElementById('fmTerreno').value),
     area_construida: Number(document.getElementById('fmConstruida').value),
     precio_clp:      Number(precioClp),
@@ -317,7 +341,7 @@ function verPropiedad(id) {
 
   const fotos = p.fotos || [];
   document.getElementById('vFotos').innerHTML = fotos.length
-    ? fotos.map((uri, i) =>
+    ? fotos.map((uri) =>
         `<img src="${uri}"
           style="width:150px;height:110px;object-fit:cover;border-radius:8px;flex-shrink:0;
                  border:${uri === p.fotoPrincipal ? '2px solid var(--terracotta)' : '2px solid transparent'};
@@ -342,22 +366,26 @@ function verPropiedad(id) {
   document.getElementById('vAmen').innerHTML = amen.map(([l,k]) =>
     `<span class="amenidad ${p[k]?'yes':''}">${p[k]?'✅':'❌'} ${l}</span>`).join('');
 
+  // Mapa con fallback por ciudad
   const mapaEl = document.getElementById('vMapa');
-  if (p.latitud && p.longitud) {
-    const bbox = `${p.longitud-.012},${p.latitud-.010},${p.longitud+.012},${p.latitud+.010}`;
+  const lat = p.latitud  || (COORDS[p.comuna] ? COORDS[p.comuna][0] : null);
+  const lng = p.longitud || (COORDS[p.comuna] ? COORDS[p.comuna][1] : null);
+
+  if (lat && lng) {
+    const bbox = `${lng-.012},${lat-.010},${lng+.012},${lat+.010}`;
     mapaEl.innerHTML = `<iframe
       width="100%" height="220" frameborder="0" scrolling="no"
       marginheight="0" marginwidth="0"
-      src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${p.latitud},${p.longitud}"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}"
       style="border:0;display:block;"></iframe>
       <p style="font-size:.75rem;color:var(--dark-soft);padding:.4rem;">
-        <a href="https://www.openstreetmap.org/?mlat=${p.latitud}&mlon=${p.longitud}"
+        <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}"
            target="_blank" style="color:var(--terracotta);">Ver en mapa completo →</a>
       </p>`;
   } else {
     mapaEl.innerHTML = `<div style="background:var(--cream-dark);border-radius:var(--radius);height:140px;
       display:flex;align-items:center;justify-content:center;color:var(--dark-soft);font-size:.88rem;">
-      🗺 Coordenadas no especificadas</div>`;
+      🗺 ${p.direccion || p.sector + ', ' + p.comuna}</div>`;
   }
 
   document.getElementById('modalVer').classList.add('open');
