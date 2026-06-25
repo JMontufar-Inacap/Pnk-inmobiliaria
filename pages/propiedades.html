@@ -18,7 +18,7 @@
       <span class="logo-p">PNK</span>
       <span class="logo-sub">Inmobiliaria</span>
     </a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="../index.html">Inicio</a></li>
       <li><a href="propiedades.html" class="active">Propiedades</a></li>
       <li><a href="registro-propietario.html">Registrar Propietario</a></li>
@@ -30,7 +30,9 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="../index.html">Inicio</a>
     <a href="propiedades.html">Propiedades</a>
-    <a href="login.html" id="mobileAuthLink">Ingresar</a>
+    <a href="login.html" id="mobileLoginLink">Ingresar</a>
+    <a href="pages/registro-propietario.html" id="mobilePropLink">Registrarme como Propietario</a>
+    <a href="pages/registro-gestor.html" id="mobileGestLink">Registrarme como Gestor</a>
   </div>
 </nav>
 
@@ -86,16 +88,20 @@
 <div class="modal-overlay" id="propModal">
   <div class="modal" style="max-width:700px;">
     <button class="modal-close" onclick="cerrarModal()">✕</button>
+
     <span style="font-size:.75rem;color:var(--dark-soft);text-transform:uppercase;letter-spacing:.06em;" id="mCod"></span>
     <h3 class="modal-title" id="mTitle"></h3>
     <p style="color:var(--dark-soft);font-size:.88rem;margin:.3rem 0 .5rem;" id="mLoc"></p>
     <p class="modal-precio" id="mPrecio"></p>
     <p style="font-size:.75rem;color:var(--dark-soft);margin-bottom:1rem;" id="mFecha"></p>
 
+    <div id="mFotos" style="display:flex;gap:.5rem;overflow-x:auto;margin-bottom:1.2rem;padding-bottom:.25rem;"></div>
+
     <div class="modal-features-grid" id="mFeatures"></div>
-    <p style="font-size:.9rem;color:var(--dark-soft);margin:1rem 0;" id="mDesc"></p>
+    <p style="font-size:.9rem;color:var(--dark-soft);margin:1rem 0;line-height:1.6;" id="mDesc"></p>
     <div class="modal-amenidades" id="mAmen"></div>
-    <div class="modal-map">🗺 Ubicación – <span id="mDireccion"></span></div>
+
+    <div id="mMapa" style="border-radius:var(--radius);overflow:hidden;margin:1rem 0;border:1px solid var(--cream-dark);"></div>
 
     <div style="margin-top:1.5rem;background:var(--cream);border-radius:var(--radius);padding:1.25rem;">
       <p style="font-weight:600;margin-bottom:.75rem;">Solicitar una visita</p>
