@@ -178,7 +178,15 @@ function guardarPropiedad() {
   const precioClp = document.getElementById('fmPrecioClp').value;
   const precioUf  = document.getElementById('fmPrecioUf').value;
   const msg       = document.getElementById('modalFormMsg');
-
+  const dorm  = Number(document.getElementById('fmDorm').value);
+  const banos = Number(document.getElementById('fmBanos').value);
+  
+  if (dorm > 9 || banos > 9) {
+    msg.style.cssText = 'display:block;padding:.65rem 1rem;border-radius:6px;font-size:.85rem;margin-bottom:1rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;';
+    msg.textContent = 'Dormitorios y baños no pueden superar 9.';
+    return;
+  }
+  
   if (!comuna || !precioClp || !precioUf) {
     msg.style.cssText = 'display:block;padding:.65rem 1rem;border-radius:6px;font-size:.85rem;margin-bottom:1rem;background:#FEE2E2;color:#991B1B;border-left:4px solid #EF4444;';
     msg.textContent   = 'Comuna, precio $ y precio UF son obligatorios.';
