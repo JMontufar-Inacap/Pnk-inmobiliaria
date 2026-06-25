@@ -6,6 +6,17 @@ const IMG_MAP = {
   'Terreno':      ['terreno1', 'terreno2'],
 };
 
+const COORDS = {
+  'La Serena':    [-29.9027, -71.2519], 'Coquimbo':     [-29.9533, -71.3406],
+  'Andacollo':    [-30.2325, -71.0857], 'Vicuña':       [-30.0333, -70.7167],
+  'La Higuera':   [-29.4980, -71.2559], 'Paiguano':     [-30.0333, -70.5667],
+  'Ovalle':       [-30.5985, -71.1990], 'Combarbalá':   [-31.1833, -71.0167],
+  'Monte Patria': [-30.6939, -70.9643], 'Punitaqui':    [-30.8333, -71.2500],
+  'Río Hurtado':  [-30.4667, -70.7167], 'Illapel':      [-31.6356, -71.1685],
+  'Canela':       [-31.3978, -71.4500], 'Los Vilos':    [-31.9097, -71.5083],
+  'Salamanca':    [-31.7729, -70.9636],
+};
+
 function getImgProp(p) {
   if (p.fotos && p.fotos.length) {
     const principal = p.fotoPrincipal || p.fotos[0];
@@ -126,6 +137,7 @@ function abrirDetalle(id) {
     fotosEl.innerHTML = '';
     fotosEl.style.display = 'none';
   }
+
   document.getElementById('mFeatures').innerHTML = [
     p.dormitorios     ? `<div class="modal-feat"><strong>Dormitorios</strong>${p.dormitorios}</div>`          : '',
     p.banos           ? `<div class="modal-feat"><strong>Baños</strong>${p.banos}</div>`                      : '',
@@ -146,18 +158,22 @@ function abrirDetalle(id) {
     `<span class="amenidad ${p[key] ? 'yes' : ''}">${p[key] ? '✅' : '❌'} ${label}</span>`
   ).join('');
 
+  // Mapa con fallback por ciudad
   const mapaEl = document.getElementById('mMapa');
-  if (p.latitud && p.longitud) {
-    const bbox = `${p.longitud - .012},${p.latitud - .010},${p.longitud + .012},${p.latitud + .010}`;
+  const lat = p.latitud  || (COORDS[p.comuna] ? COORDS[p.comuna][0] : null);
+  const lng = p.longitud || (COORDS[p.comuna] ? COORDS[p.comuna][1] : null);
+
+  if (lat && lng) {
+    const bbox = `${lng - .012},${lat - .010},${lng + .012},${lat + .010}`;
     mapaEl.style.display = 'block';
     mapaEl.innerHTML = `
       <iframe
         width="100%" height="220" frameborder="0" scrolling="no"
         marginheight="0" marginwidth="0"
-        src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${p.latitud},${p.longitud}"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}"
         style="border:0;display:block;"></iframe>
       <p style="font-size:.75rem;color:var(--dark-soft);padding:.4rem .6rem;">
-        <a href="https://www.openstreetmap.org/?mlat=${p.latitud}&mlon=${p.longitud}"
+        <a href="https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}"
            target="_blank" style="color:var(--terracotta);">Ver en mapa completo →</a>
       </p>`;
   } else {
