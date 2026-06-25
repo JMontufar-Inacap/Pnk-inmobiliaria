@@ -17,10 +17,24 @@ function cargarImagenesGuardadas() {
 }
 cargarImagenesGuardadas();
 
-function inyectarImagenes() {
-  const overlay = 'linear-gradient(rgba(0,0,0,0.30),rgba(0,0,0,0.30))';
-  const overlayLight = 'linear-gradient(rgba(0,0,0,0.20),rgba(0,0,0,0.20))';
+function comprimirImagen(dataUrl, maxWidth = 1200, quality = 0.78) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio  = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = dataUrl;
+  });
+}
 
+function inyectarImagenes() {
+  const overlay      = 'linear-gradient(rgba(0,0,0,0.30),rgba(0,0,0,0.30))';
+  const overlayLight = 'linear-gradient(rgba(0,0,0,0.20),rgba(0,0,0,0.20))';
   const css = `
     .t1  { background: ${overlayLight} center/cover, url("${PNK_IMAGES['casa1']}") center/cover !important; }
     .t2  { background: ${overlayLight} center/cover, url("${PNK_IMAGES['depto1']}") center/cover !important; }
@@ -34,27 +48,25 @@ function inyectarImagenes() {
     .lobby-bg { background: linear-gradient(rgba(0,0,0,0.62),rgba(0,0,0,0.62)) center/cover, url("${PNK_IMAGES['Lobby']}") center/cover !important; }
   `;
   let tag = document.getElementById('pnk-img-styles');
-  if (!tag) {
-    tag = document.createElement('style');
-    tag.id = 'pnk-img-styles';
-    document.head.appendChild(tag);
-  }
+  if (!tag) { tag = document.createElement('style'); tag.id = 'pnk-img-styles'; document.head.appendChild(tag); }
   tag.textContent = css;
 }
 
-function subirImagen(input, clave, callback) {
+async function subirImagen(input, clave, callback) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 3 * 1024 * 1024) {
-    alert('La imagen no debe superar 3 MB.');
-    return;
-  }
+  if (file.size > 3 * 1024 * 1024) { alert('La imagen no debe superar 3 MB.'); return; }
   const reader = new FileReader();
-  reader.onload = (e) => {
-    PNK_IMAGES[clave] = e.target.result;
-    localStorage.setItem('pnk_img_' + clave, e.target.result);
+  reader.onload = async (e) => {
+    const compressed = await comprimirImagen(e.target.result);
+    PNK_IMAGES[clave] = compressed;
+    try {
+      localStorage.setItem('pnk_img_' + clave, compressed);
+    } catch (err) {
+      console.warn('localStorage lleno, imagen no persistida:', err);
+    }
     inyectarImagenes();
-    if (callback) callback(clave, e.target.result);
+    if (callback) callback(clave, compressed);
   };
   reader.readAsDataURL(file);
 }
