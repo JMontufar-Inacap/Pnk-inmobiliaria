@@ -1,11 +1,16 @@
-
 const PNK_DB = {
 
   _get(key)      { return JSON.parse(localStorage.getItem(key) || 'null'); },
-  _set(key, val) { localStorage.setItem(key, JSON.stringify(val)); },
+  _set(key, val) {
+    try {
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch (e) {
+      console.error(`localStorage lleno al guardar "${key}". Reduce el número de fotos.`, e);
+    }
+  },
 
   init() {
-    if (this._get('pnk_init')) return; 
+    if (this._get('pnk_init')) return;
 
     const usuarios = [
       {
@@ -59,6 +64,7 @@ const PNK_DB = {
         precio_clp: 154000000, precio_uf: 3850,
         bodega: false, estacionamiento: true, logia: false,
         cocina_amoblada: true, antejardin: true, patio_trasero: true, piscina: false,
+        latitud: -29.9027, longitud: -71.2519,
         estado: 'activa', propietario_id: 2,
         fecha_publicacion: new Date().toISOString()
       },
@@ -71,6 +77,7 @@ const PNK_DB = {
         precio_clp: 112000000, precio_uf: 2800,
         bodega: true, estacionamiento: true, logia: false,
         cocina_amoblada: false, antejardin: false, patio_trasero: false, piscina: false,
+        latitud: -29.9533, longitud: -71.3406,
         estado: 'activa', propietario_id: 2,
         fecha_publicacion: new Date().toISOString()
       },
@@ -83,6 +90,7 @@ const PNK_DB = {
         precio_clp: 38000000, precio_uf: 950,
         bodega: false, estacionamiento: false, logia: false,
         cocina_amoblada: false, antejardin: true, patio_trasero: false, piscina: false,
+        latitud: -30.5985, longitud: -71.1990,
         estado: 'activa', propietario_id: 2,
         fecha_publicacion: new Date().toISOString()
       },
@@ -95,6 +103,7 @@ const PNK_DB = {
         precio_clp: 85000000, precio_uf: 2125,
         bodega: false, estacionamiento: true, logia: false,
         cocina_amoblada: true, antejardin: true, patio_trasero: true, piscina: true,
+        latitud: -31.6356, longitud: -71.1685,
         estado: 'activa', propietario_id: 2,
         fecha_publicacion: new Date().toISOString()
       },
@@ -107,6 +116,7 @@ const PNK_DB = {
         precio_clp: 145000000, precio_uf: 3625,
         bodega: false, estacionamiento: true, logia: true,
         cocina_amoblada: false, antejardin: false, patio_trasero: false, piscina: false,
+        latitud: -29.9800, longitud: -71.3550,
         estado: 'activa', propietario_id: 2,
         fecha_publicacion: new Date().toISOString()
       }
@@ -115,13 +125,14 @@ const PNK_DB = {
     this._set('pnk_usuarios',    usuarios);
     this._set('pnk_propiedades', propiedades);
     this._set('pnk_visitas',     []);
+    this._set('pnk_captaciones', []);
     this._set('pnk_session',     null);
     this._set('pnk_init',        true);
     console.log('✅ PNK DB inicializada');
   },
 
   getSession()       { return this._get('pnk_session'); },
-  setSession(user)   { this._set('pnk_session', { id: user.id, nombre: user.nombre, rol: user.rol, correo: user.correo }); },
+  setSession(user)   { this._set('pnk_session', { id: user.id, nombre: user.nombre, rol: user.rol, correo: user.correo, penka_id: user.penka_id || null }); },
   clearSession()     { this._set('pnk_session', null); },
   isLoggedIn()       { return !!this.getSession(); },
   isAdmin()          { return this.getSession()?.rol === 'admin'; },
@@ -144,7 +155,7 @@ const PNK_DB = {
 
   login(correo, password) {
     const user = this.findUserByCorreo(correo);
-    if (!user)                     return { ok: false, msg: 'Correo o contraseña incorrectos.' };
+    if (!user)                      return { ok: false, msg: 'Correo o contraseña incorrectos.' };
     if (user.password !== password) return { ok: false, msg: 'Correo o contraseña incorrectos.' };
     if (user.estado === 'pendiente') return { ok: false, msg: 'Tu cuenta está pendiente de activación por el Administrador.' };
     if (user.estado === 'inactivo')  return { ok: false, msg: 'Tu cuenta ha sido desactivada. Contacta al administrador.' };
@@ -199,7 +210,7 @@ const PNK_DB = {
     return props;
   },
 
-  getPropiedadesUsuario(usuarioId) { return this.getPropiedades().filter(p=>p.propietario_id===usuarioId); },
+  getPropiedadesUsuario(usuarioId) { return this.getPropiedades().filter(p => p.propietario_id === usuarioId); },
 
   getPropiedadById(id) {
     return (this._get('pnk_propiedades') || []).find(p => p.id === id) || null;
@@ -247,6 +258,21 @@ const PNK_DB = {
     const arr = this.getVisitas();
     arr.push({ id: arr.length + 1, ...data, fecha: new Date().toISOString(), estado: 'pendiente' });
     this._set('pnk_visitas', arr);
+  },
+
+  getCaptaciones() { return this._get('pnk_captaciones') || []; },
+
+  crearCaptacion(data) {
+    const arr = this.getCaptaciones();
+    const captacion = {
+      id: arr.length + 1,
+      ...data,
+      estado: 'pendiente',
+      fecha: new Date().toISOString()
+    };
+    arr.push(captacion);
+    this._set('pnk_captaciones', arr);
+    return captacion;
   },
 
   fmtClp(n) {
