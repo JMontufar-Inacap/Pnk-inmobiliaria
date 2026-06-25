@@ -1,4 +1,3 @@
-
 let propActual = null;
 
 const IMG_MAP = {
@@ -8,29 +7,15 @@ const IMG_MAP = {
 };
 
 function getImgProp(p) {
-  if(p.fotos&&p.fotos.length){const principal=p.fotoPrincipal||p.fotos[0]; return `linear-gradient(rgba(0,0,0,.30),rgba(0,0,0,.30)) center/cover, url('${principal}') center/cover`;}
-
+  if (p.fotos && p.fotos.length) {
+    const principal = p.fotoPrincipal || p.fotos[0];
+    return `linear-gradient(rgba(0,0,0,.30),rgba(0,0,0,.30)) center/cover, url('${principal}') center/cover`;
+  }
   const claves = IMG_MAP[p.tipo] || ['casa1'];
   const clave  = claves[p.id % claves.length];
   const src    = PNK_IMAGES[clave] || '';
   return `linear-gradient(rgba(0,0,0,.30),rgba(0,0,0,.30)) center/cover, url('${src}') center/cover`;
 }
-
-(function initNav() {
-  const ses = PNK_DB.getSession();
-  if (!ses) return;
-
-  const dashLinks = {
-    admin:       'dashboard.html',
-    propietario: 'dashboard-propietario.html',
-    gestor:      'dashboard-gestor.html',
-  };
-
-  document.getElementById('navAuthLink').innerHTML =
-    `<a href="${dashLinks[ses.rol] ?? 'login.html'}" class="btn-nav btn-nav-alt">Mi cuenta</a>`;
-  document.getElementById('navPropLink').style.display = 'none';
-  document.getElementById('navGestLink').style.display = 'none';
-})();
 
 function poblarComunas() {
   const prov = document.getElementById('fProvincia').value;
@@ -123,12 +108,28 @@ function abrirDetalle(id) {
   document.getElementById('mPrecio').textContent = `${PNK_DB.fmtClp(p.precio_clp)} · ${p.precio_uf.toLocaleString('es-CL')} UF`;
   document.getElementById('mFecha').textContent  = '📅 Publicada: ' + p.fecha_publicacion.slice(0, 10);
   document.getElementById('mDesc').textContent   = p.descripcion || '';
-  document.getElementById('mDireccion').textContent = p.direccion || `${p.sector}, ${p.comuna}`;
 
+  const fotos   = p.fotos || [];
+  const fotosEl = document.getElementById('mFotos');
+  if (fotos.length) {
+    fotosEl.innerHTML = fotos.map(uri =>
+      `<img src="${uri}"
+        style="width:150px;height:110px;object-fit:cover;border-radius:8px;
+               flex-shrink:0;cursor:pointer;border:2px solid transparent;
+               transition:border-color .2s;"
+        onclick="ampliarFoto(this)"
+        onmouseover="this.style.borderColor='var(--terracotta)'"
+        onmouseout="this.style.borderColor='transparent'"/>`
+    ).join('');
+    fotosEl.style.display = 'flex';
+  } else {
+    fotosEl.innerHTML = '';
+    fotosEl.style.display = 'none';
+  }
   document.getElementById('mFeatures').innerHTML = [
-    p.dormitorios    ? `<div class="modal-feat"><strong>Dormitorios</strong>${p.dormitorios}</div>`       : '',
-    p.banos          ? `<div class="modal-feat"><strong>Baños</strong>${p.banos}</div>`                   : '',
-    p.area_terreno   ? `<div class="modal-feat"><strong>Área Terreno</strong>${p.area_terreno} m²</div>`  : '',
+    p.dormitorios     ? `<div class="modal-feat"><strong>Dormitorios</strong>${p.dormitorios}</div>`          : '',
+    p.banos           ? `<div class="modal-feat"><strong>Baños</strong>${p.banos}</div>`                      : '',
+    p.area_terreno    ? `<div class="modal-feat"><strong>Área Terreno</strong>${p.area_terreno} m²</div>`     : '',
     p.area_construida ? `<div class="modal-feat"><strong>Área Construida</strong>${p.area_construida} m²</div>` : '',
   ].join('');
 
@@ -145,6 +146,30 @@ function abrirDetalle(id) {
     `<span class="amenidad ${p[key] ? 'yes' : ''}">${p[key] ? '✅' : '❌'} ${label}</span>`
   ).join('');
 
+  const mapaEl = document.getElementById('mMapa');
+  if (p.latitud && p.longitud) {
+    const bbox = `${p.longitud - .012},${p.latitud - .010},${p.longitud + .012},${p.latitud + .010}`;
+    mapaEl.style.display = 'block';
+    mapaEl.innerHTML = `
+      <iframe
+        width="100%" height="220" frameborder="0" scrolling="no"
+        marginheight="0" marginwidth="0"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${p.latitud},${p.longitud}"
+        style="border:0;display:block;"></iframe>
+      <p style="font-size:.75rem;color:var(--dark-soft);padding:.4rem .6rem;">
+        <a href="https://www.openstreetmap.org/?mlat=${p.latitud}&mlon=${p.longitud}"
+           target="_blank" style="color:var(--terracotta);">Ver en mapa completo →</a>
+      </p>`;
+  } else {
+    const dir = p.direccion || `${p.sector}, ${p.comuna}`;
+    mapaEl.style.display = 'block';
+    mapaEl.innerHTML = `
+      <div style="background:var(--cream-dark);padding:1.1rem 1.25rem;font-size:.88rem;
+                  color:var(--dark-soft);display:flex;align-items:center;gap:.5rem;">
+        🗺 <span>${dir}</span>
+      </div>`;
+  }
+
   document.getElementById('visitaForm').innerHTML = `
     <input type="text"  id="vNombre"   placeholder="Tu nombre"       style="padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;background:white;"/>
     <input type="email" id="vCorreo"   placeholder="Tu correo"       style="padding:.65rem;border:1.5px solid var(--cream-dark);border-radius:6px;font-family:inherit;font-size:.9rem;background:white;"/>
@@ -156,6 +181,19 @@ function abrirDetalle(id) {
 
   document.getElementById('propModal').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function ampliarFoto(imgEl) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;
+    display:flex;align-items:center;justify-content:center;cursor:zoom-out;`;
+  const img = document.createElement('img');
+  img.src = imgEl.src;
+  img.style.cssText = 'max-width:90vw;max-height:88vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.5);';
+  overlay.appendChild(img);
+  overlay.addEventListener('click', () => document.body.removeChild(overlay));
+  document.body.appendChild(overlay);
 }
 
 function cerrarModal() {
@@ -183,7 +221,7 @@ function enviarVisita() {
 
   document.getElementById('visitaForm').innerHTML =
     `<p style="grid-column:1/-1;text-align:center;color:#065F46;font-weight:600;">
-       ✅ ¡Solicitud enviada! Te contactaremos pronto.
+       ¡Solicitud enviada! Te contactaremos pronto.
      </p>`;
 
   PNK_DB.toast('¡Solicitud de visita registrada!', 'success');
