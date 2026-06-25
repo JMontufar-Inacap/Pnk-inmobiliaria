@@ -20,8 +20,9 @@ function poblarComunasModal(selVal = '') {
     `<option ${c===selVal?'selected':''}>${c}</option>`).join('');
 }
 
-let editandoId  = null;
-let fotosActuales = [];
+let editandoId      = null;
+let fotosActuales   = [];
+let fotoPrincipalIdx = 0;
 
 function render() {
   const todas = PNK_DB.getPropiedades();
@@ -65,7 +66,7 @@ function render() {
         <tr><th>Código</th><th>Tipo</th><th>Ubicación</th><th>Precio $</th><th>UF</th><th>Fotos</th><th>Estado</th><th>Acciones</th></tr>
       </thead>
       <tbody>
-        ${mias.reverse().map(p => `
+        ${mias.slice().reverse().map(p => `
           <tr>
             <td><code>${p.codigo}</code></td>
             <td>${p.tipo}</td>
@@ -85,50 +86,68 @@ function render() {
 }
 
 function abrirModalPropiedad(id) {
-  editandoId    = id;
-  fotosActuales = [];
+  editandoId       = id;
+  fotosActuales    = [];
+  fotoPrincipalIdx = 0;
+
   document.getElementById('modalPropMsg').style.display = 'none';
-  document.getElementById('inputFotos').value = '';
-  document.getElementById('fotosError').style.display = 'none';
+  document.getElementById('inputFotos').value           = '';
+  document.getElementById('fotosError').style.display   = 'none';
   poblarComunasModal();
 
   if (id) {
     const p = PNK_DB.getPropiedadById(id);
     if (!p || p.propietario_id !== ses.id) return;
+
     document.getElementById('modalPropTitle').textContent = `Editar ${p.codigo}`;
     document.getElementById('btnGuardarProp').textContent = 'Guardar Cambios';
-    document.getElementById('fmTipo').value      = p.tipo;
-    document.getElementById('fmEstado').value    = p.estado;
-    document.getElementById('fmProvincia').value = p.provincia;
+
+    document.getElementById('fmTipo').value       = p.tipo;
+    document.getElementById('fmEstado').value     = p.estado;
+    document.getElementById('fmProvincia').value  = p.provincia;
     poblarComunasModal(p.comuna);
-    document.getElementById('fmSector').value    = p.sector    || '';
-    document.getElementById('fmDireccion').value = p.direccion || '';
-    document.getElementById('fmDorm').value      = p.dormitorios;
-    document.getElementById('fmBanos').value     = p.banos;
-    document.getElementById('fmTerreno').value   = p.area_terreno;
-    document.getElementById('fmConstruida').value= p.area_construida;
-    document.getElementById('fmPrecioClp').value = p.precio_clp;
-    document.getElementById('fmPrecioUf').value  = p.precio_uf;
-    document.getElementById('fmDesc').value      = p.descripcion || '';
-    document.getElementById('fmBodega').checked  = p.bodega;
-    document.getElementById('fmEstac').checked   = p.estacionamiento;
-    document.getElementById('fmLogia').checked   = p.logia;
-    document.getElementById('fmCocina').checked  = p.cocina_amoblada;
-    document.getElementById('fmAnte').checked    = p.antejardin;
-    document.getElementById('fmPatio').checked   = p.patio_trasero;
-    document.getElementById('fmPiscina').checked = p.piscina;
-    document.getElementById('fmLat').value       = p.latitud  || '';
-    document.getElementById('fmLng').value       = p.longitud || '';
-    fotosActuales = p.fotos || [];
+    document.getElementById('fmSector').value     = p.sector    || '';
+    document.getElementById('fmDireccion').value  = p.direccion || '';
+    document.getElementById('fmDorm').value       = p.dormitorios;
+    document.getElementById('fmBanos').value      = p.banos;
+    document.getElementById('fmTerreno').value    = p.area_terreno;
+    document.getElementById('fmConstruida').value = p.area_construida;
+    document.getElementById('fmPrecioClp').value  = p.precio_clp;
+    document.getElementById('fmPrecioUf').value   = p.precio_uf;
+    document.getElementById('fmDesc').value       = p.descripcion || '';
+    document.getElementById('fmBodega').checked   = p.bodega;
+    document.getElementById('fmEstac').checked    = p.estacionamiento;
+    document.getElementById('fmLogia').checked    = p.logia;
+    document.getElementById('fmCocina').checked   = p.cocina_amoblada;
+    document.getElementById('fmAnte').checked     = p.antejardin;
+    document.getElementById('fmPatio').checked    = p.patio_trasero;
+    document.getElementById('fmPiscina').checked  = p.piscina;
+    document.getElementById('fmLat').value        = p.latitud  || '';
+    document.getElementById('fmLng').value        = p.longitud || '';
+
+    fotosActuales = p.fotos ? [...p.fotos] : [];
+
+    if (p.fotoPrincipal && fotosActuales.length) {
+      const idx = fotosActuales.indexOf(p.fotoPrincipal);
+      fotoPrincipalIdx = idx >= 0 ? idx : 0;
+    } else {
+      fotoPrincipalIdx = 0;
+    }
+
     renderFotosPrevias();
   } else {
     document.getElementById('modalPropTitle').textContent = 'Publicar Nueva Propiedad';
     document.getElementById('btnGuardarProp').textContent = 'Publicar Propiedad';
-    ['fmSector','fmDireccion','fmDesc','fmLat','fmLng'].forEach(id => document.getElementById(id).value = '');
-    ['fmDorm','fmBanos','fmTerreno','fmConstruida','fmPrecioClp','fmPrecioUf'].forEach(id => document.getElementById(id).value = 0);
-    ['fmBodega','fmEstac','fmLogia','fmCocina','fmAnte','fmPatio','fmPiscina'].forEach(id => document.getElementById(id).checked = false);
-    document.getElementById('fmTipo').value   = 'Casa';
-    document.getElementById('fmEstado').value = 'activa';
+
+    ['fmSector','fmDireccion','fmDesc','fmLat','fmLng'].forEach(id =>
+      document.getElementById(id).value = '');
+    ['fmDorm','fmBanos','fmTerreno','fmConstruida','fmPrecioClp','fmPrecioUf'].forEach(id =>
+      document.getElementById(id).value = 0);
+    ['fmBodega','fmEstac','fmLogia','fmCocina','fmAnte','fmPatio','fmPiscina'].forEach(id =>
+      document.getElementById(id).checked = false);
+
+    document.getElementById('fmTipo').value    = 'Casa';
+    document.getElementById('fmEstado').value  = 'activa';
     document.getElementById('fotosPrevias').innerHTML = '';
   }
 
@@ -137,13 +156,13 @@ function abrirModalPropiedad(id) {
 }
 
 function previsualizarFotos(input) {
-  const archivos = Array.from(input.files);
-  const errEl    = document.getElementById('fotosError');
+  const archivos   = Array.from(input.files);
+  const errEl      = document.getElementById('fotosError');
   errEl.style.display = 'none';
 
   const disponibles = 10 - fotosActuales.length;
   if (disponibles <= 0) {
-    errEl.textContent = 'Ya tienes 10 fotos. Elimina alguna para agregar más.';
+    errEl.textContent   = 'Ya tienes 10 fotos. Elimina alguna para agregar más.';
     errEl.style.display = 'block';
     input.value = '';
     return;
@@ -151,14 +170,14 @@ function previsualizarFotos(input) {
 
   const aAgregar = archivos.slice(0, disponibles);
   if (archivos.length > disponibles) {
-    errEl.textContent = `Solo se agregaron ${disponibles} foto(s). Límite máximo: 10.`;
+    errEl.textContent   = `Solo se agregaron ${disponibles} foto(s). Límite máximo: 10.`;
     errEl.style.display = 'block';
   }
 
   let cargadas = 0;
   aAgregar.forEach(file => {
     if (file.size > 3 * 1024 * 1024) {
-      errEl.textContent = `"${file.name}" supera 3 MB y fue omitida.`;
+      errEl.textContent   = `"${file.name}" supera 3 MB y fue omitida.`;
       errEl.style.display = 'block';
       cargadas++;
       if (cargadas === aAgregar.length) renderFotosPrevias();
@@ -176,17 +195,48 @@ function previsualizarFotos(input) {
 }
 
 function renderFotosPrevias() {
-  document.getElementById('fotosPrevias').innerHTML = fotosActuales.map((uri, i) => `
-    <div style="position:relative;flex-shrink:0;">
-      <img src="${uri}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:2px solid var(--cream-dark);"/>
-      <button onclick="eliminarFoto(${i})"
-        style="position:absolute;top:-6px;right:-6px;background:#EF4444;color:white;border:none;
-        border-radius:50%;width:18px;height:18px;font-size:.65rem;cursor:pointer;line-height:1;">✕</button>
-    </div>`).join('');
+  document.getElementById('fotosPrevias').innerHTML = fotosActuales.map((uri, i) => {
+    const esPrincipal = (i === fotoPrincipalIdx);
+    return `
+      <div style="position:relative;flex-shrink:0;text-align:center;">
+        <img src="${uri}"
+          style="width:80px;height:60px;object-fit:cover;border-radius:6px;
+                 border:2px solid ${esPrincipal ? 'var(--terracotta)' : 'var(--cream-dark)'};
+                 display:block;"/>
+
+        <button onclick="eliminarFoto(${i})"
+          title="Eliminar foto"
+          style="position:absolute;top:-7px;right:-7px;background:#EF4444;color:white;border:none;
+                 border-radius:50%;width:18px;height:18px;font-size:.6rem;cursor:pointer;
+                 line-height:18px;text-align:center;padding:0;">✕</button>
+
+        ${esPrincipal
+          ? `<span style="display:block;margin-top:.25rem;font-size:.6rem;font-weight:700;
+               color:var(--terracotta);letter-spacing:.02em;">★ Portada</span>`
+          : `<button onclick="setPrincipal(${i})"
+               title="Usar como portada"
+               style="display:block;width:100%;margin-top:.25rem;background:none;border:none;
+                      font-size:.6rem;color:var(--dark-soft);cursor:pointer;padding:0;
+                      text-decoration:underline;">usar portada</button>`
+        }
+      </div>`;
+  }).join('');
+}
+
+function setPrincipal(i) {
+  fotoPrincipalIdx = i;
+  renderFotosPrevias();
 }
 
 function eliminarFoto(i) {
   fotosActuales.splice(i, 1);
+  if (fotosActuales.length === 0) {
+    fotoPrincipalIdx = 0;
+  } else if (i < fotoPrincipalIdx) {
+    fotoPrincipalIdx--;
+  } else if (i === fotoPrincipalIdx) {
+    fotoPrincipalIdx = 0;
+  }
   renderFotosPrevias();
 }
 
@@ -201,6 +251,10 @@ function guardarPropiedad() {
     msg.textContent   = 'Comuna, precio $ y precio UF son obligatorios.';
     return;
   }
+
+  const fotoPrincipal = fotosActuales.length > 0
+    ? (fotosActuales[fotoPrincipalIdx] || fotosActuales[0])
+    : null;
 
   const data = {
     tipo:            document.getElementById('fmTipo').value,
@@ -227,6 +281,7 @@ function guardarPropiedad() {
     longitud:        parseFloat(document.getElementById('fmLng').value) || null,
     propietario_id:  ses.id,
     fotos:           fotosActuales,
+    fotoPrincipal,
   };
 
   if (editandoId) {
@@ -254,7 +309,13 @@ function verPropiedad(id) {
 
   const fotos = p.fotos || [];
   document.getElementById('vFotos').innerHTML = fotos.length
-    ? fotos.map(uri => `<img src="${uri}" style="width:150px;height:110px;object-fit:cover;border-radius:8px;flex-shrink:0;"/>`).join('')
+    ? fotos.map((uri, i) =>
+        `<img src="${uri}"
+          style="width:150px;height:110px;object-fit:cover;border-radius:8px;flex-shrink:0;
+                 border:${uri === p.fotoPrincipal ? '2px solid var(--terracotta)' : '2px solid transparent'};
+                 cursor:pointer;"
+          title="${uri === p.fotoPrincipal ? '★ Portada' : 'Ver foto'}"
+          onclick="ampliarFotoAdmin(this)"/>`).join('')
     : '<p style="color:var(--dark-soft);font-size:.85rem;">Sin fotografías adjuntas.</p>';
 
   document.getElementById('vFeatures').innerHTML = [
@@ -275,24 +336,41 @@ function verPropiedad(id) {
 
   const mapaEl = document.getElementById('vMapa');
   if (p.latitud && p.longitud) {
+    const bbox = `${p.longitud-.012},${p.latitud-.010},${p.longitud+.012},${p.latitud+.010}`;
     mapaEl.innerHTML = `<iframe
       width="100%" height="220" frameborder="0" scrolling="no"
       marginheight="0" marginwidth="0"
-      src="https://www.openstreetmap.org/export/embed.html?bbox=${p.longitud-.01},${p.latitud-.01},${p.longitud+.01},${p.latitud+.01}&layer=mapnik&marker=${p.latitud},${p.longitud}"
-      style="border:0;"></iframe>
+      src="https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${p.latitud},${p.longitud}"
+      style="border:0;display:block;"></iframe>
       <p style="font-size:.75rem;color:var(--dark-soft);padding:.4rem;">
-        <a href="https://www.openstreetmap.org/?mlat=${p.latitud}&mlon=${p.longitud}" target="_blank" style="color:var(--terracotta);">Ver en mapa completo →</a>
+        <a href="https://www.openstreetmap.org/?mlat=${p.latitud}&mlon=${p.longitud}"
+           target="_blank" style="color:var(--terracotta);">Ver en mapa completo →</a>
       </p>`;
   } else {
-    mapaEl.innerHTML = `<div style="background:var(--cream-dark);border-radius:var(--radius);height:140px;display:flex;align-items:center;justify-content:center;color:var(--dark-soft);font-size:.88rem;">🗺 Coordenadas no especificadas</div>`;
+    mapaEl.innerHTML = `<div style="background:var(--cream-dark);border-radius:var(--radius);height:140px;
+      display:flex;align-items:center;justify-content:center;color:var(--dark-soft);font-size:.88rem;">
+      🗺 Coordenadas no especificadas</div>`;
   }
 
   document.getElementById('modalVer').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
+function ampliarFotoAdmin(imgEl) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9999;
+    display:flex;align-items:center;justify-content:center;cursor:zoom-out;`;
+  const img = document.createElement('img');
+  img.src = imgEl.src;
+  img.style.cssText = 'max-width:90vw;max-height:88vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.5);';
+  overlay.appendChild(img);
+  overlay.addEventListener('click', () => document.body.removeChild(overlay));
+  document.body.appendChild(overlay);
+}
+
 function confirmarEliminar(id, codigo) {
-  document.getElementById('msgEliminar').textContent = `¿Estás seguro de eliminar la propiedad ${codigo}? Esta acción no se puede deshacer.`;
+  document.getElementById('msgEliminar').textContent =
+    `¿Estás seguro de eliminar la propiedad ${codigo}? Esta acción no se puede deshacer.`;
   document.getElementById('btnConfirmarEliminar').onclick = () => {
     PNK_DB.eliminarPropiedad(id);
     PNK_DB.toast('Propiedad eliminada.', 'warning');
