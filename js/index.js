@@ -1,17 +1,3 @@
-const styleOverride = document.createElement('style');
-styleOverride.textContent = `
-  .t1  { background-image: url("img/Casa1.jpg") !important; }
-  .t2  { background-image: url("img/Depto1.jpg") !important; }
-  .t3  { background-image: url("img/Terreno1.jpg") !important; }
-  .pi1 { background-image: url("img/Casa1.jpg") !important; }
-  .pi2 { background-image: url("img/Depto1.jpg") !important; }
-  .pi3 { background-image: url("img/Terreno1.jpg") !important; }
-  .pi4 { background-image: url("img/Casa2.jpg") !important; }
-  .pi5 { background-image: url("img/Depto2.jpg") !important; }
-  .pi6 { background-image: url("img/Terreno2.jpg") !important; }
-`;
-document.head.appendChild(styleOverride);
-
 const ses      = PNK_DB.getSession();
 const navLinks = document.getElementById('navLinks');
 
@@ -77,10 +63,10 @@ if (propiedades.length) {
         <h4>${p.tipo} ${p.sector}</h4>
         <p class="pc-loc">📍 ${p.sector}, ${p.comuna} – Prov. ${p.provincia}</p>
         <div class="pc-features">
-          ${p.dormitorios      ? `<span>🛏 ${p.dormitorios} dorm.</span>`    : ''}
-          ${p.banos            ? `<span>🚿 ${p.banos} baños</span>`          : ''}
-          ${p.area_construida  ? `<span>📐 ${p.area_construida} m²</span>`   : ''}
-          ${p.estacionamiento  ? `<span>🅿 Estac.</span>`                    : ''}
+          ${p.dormitorios     ? `<span>🛏 ${p.dormitorios} dorm.</span>`   : ''}
+          ${p.banos           ? `<span>🚿 ${p.banos} baños</span>`         : ''}
+          ${p.area_construida ? `<span>📐 ${p.area_construida} m²</span>`  : ''}
+          ${p.estacionamiento ? `<span>🅿 Estac.</span>`                   : ''}
         </div>
         <div class="pc-footer">
           <div>
